@@ -38,6 +38,52 @@ const Students = mongoose.model('Students', new mongoose.Schema({
   cultural_events: Number
 }));
 
+const Weights = mongoose.model('Weights', new mongoose.Schema({
+  a_student: {type: [Number], default: [2, 1]}, // [yes, no]
+  olimpiads: {
+    Int: {first: {type: Number, default: 6}, second: {type: Number, default: 5}, third: {type: Number, default: 3}},
+    Rus: {first: {type: Number, default: 4}, second: {type: Number, default: 3}, third: {type: Number, default: 2}},
+    Uni: {first: {type: Number, default: 3}, second: {type: Number, default: 2}, third: {type: Number, default: 1}}
+  },
+  ed_programms: {type: Number, default: 1},
+  research_contests: {
+    Int: {first: {type: Number, default: 6}, second: {type: Number, default: 5}, third: {type: Number, default: 3}},
+    Rus: {first: {type: Number, default: 4}, second: {type: Number, default: 3}, third: {type: Number, default: 2}},
+    Uni: {first: {type: Number, default: 3}, second: {type: Number, default: 2}, third: {type: Number, default: 1}}
+  },
+  publications: {type: [Number], default: [3, 1]}, // [ВАК/РИНЦ, Прочее]
+  reports: {type: Number, default: 1},
+  create_contests: {
+    Int: {first: {type: Number, default: 6}, second: {type: Number, default: 5}, third: {type: Number, default: 3}},
+    Rus: {first: {type: Number, default: 4}, second: {type: Number, default: 3}, third: {type: Number, default: 2}},
+    Uni: {first: {type: Number, default: 3}, second: {type: Number, default: 2}, third: {type: Number, default: 1}}
+  },
+  sports_title: [
+    {"Master of Sports": {type: Number, default: 8}, "National Team Member": {type: Number, default: 8}}
+  ],
+  sports_championships: {
+    Int: {type: Number, default: 8},
+    Rus: {type: Number, default: 6},
+    CFO: {type: Number, default: 5},
+    Regional: {type: Number, default: 4},
+    other: {type: Number, default: 4}
+  },
+  sports_popularization: {type: Number, default: 3},
+  starosta: {type: Number, default: 2},
+  profsoyuz: {type: Number, default: 2},
+  volunteer: {type: Number, default: 2},
+  cultural_events: {type: Number, default: 2}
+}));
+
+Weights.findOne().then(doc => {
+  if (!doc) {
+    const defaultWeights = new weights({});
+    defaultWeights.save().then(() => console.log('Стандартные веса добавлены'));
+  } else {
+    console.log('Веса уже существуеют');
+  } 
+});
+
 // Настройка Handlebars
 const hbs = exphbs.create({
   extname: '.hbs',
@@ -47,6 +93,18 @@ const hbs = exphbs.create({
   helpers: {
     eq: function(a, b) {
       return a === b;
+    },
+    ne: function(a, b) {
+      return a !== b;
+    },
+    sortUrl: function(selectedGroup, sortBy, currentSortBy, currentSortOrder) {
+      let url = '?';
+      if (selectedGroup && selectedGroup !== 'Все группы') {
+        url += `group=${selectedGroup}&`;
+      }
+      const newSortOrder = (currentSortBy === sortBy && currentSortOrder === 'asc') ? 'desc' : 'asc';
+      url += `sortBy=${sortBy}&sortOrder=${newSortOrder}`;
+      return url;
     }
   }
 });
@@ -72,10 +130,53 @@ app.get('/dashboard', (req, res) => {
   });
 });
 
-app.get('/students', (req, res) => {
+app.get('/students', async (req, res) => {
+  const groups = await Students.distinct('group');
+  const selectedGroup = req.query.group;
+  const sortBy = req.query.sortBy || 'name';
+  const sortOrder = req.query.sortOrder || 'asc';
+  
+  // Фильтрация по группе
+  let query = {};
+  if (selectedGroup && selectedGroup !== 'Все группы') {
+    query.group = selectedGroup;
+  }
+  
+  // Определение направления сортировки
+  const sortDirection = sortOrder === 'desc' ? -1 : 1;
+  const sortOptions = {};
+  sortOptions[sortBy] = sortDirection;
+  
+  const students = await Students.find(query).sort(sortOptions);
+  const weights = await Weights.find();
+
+  let academic_score = 0;
+  let scientific_score = 0;
+  let creative_score = 0;
+  let sports_score = 0;
+  let social_score = 0;
+  let total_score = 0;
+
+
   res.render('pages/students', {
     title: 'Студенты',
-    activeTab: 'students'
+    activeTab: 'students',
+    selectedGroup: selectedGroup || 'Все группы',
+    sortBy: sortBy,
+    sortOrder: sortOrder,
+    groups: groups.map(group => ({
+      group: group,
+    })),
+    students: students.map(student => ({
+      group: student.group,
+      name: student.name,
+      academic_score: academic_score,
+      scientific_score: scientific_score,
+      creative_score: creative_score,
+      sports_score: sports_score,
+      social_score: social_score,
+      total_score: total_score,
+    })),
   });
 });
 
