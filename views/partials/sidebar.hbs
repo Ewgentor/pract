@@ -1,0 +1,81 @@
+<!-- Desktop Sidebar -->
+<aside class="d-none d-lg-block bg-white border-end position-sticky" style="width: 256px; top: 73px; height: calc(100vh - 73px); z-index: 1010;">
+    <nav class="p-3">
+        <ul class="nav flex-column gap-1">
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded {{#if (eq activeTab 'dashboard')}}bg-primary bg-opacity-10 text-primary fw-medium{{else}}text-dark{{/if}}" href="/dashboard">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Дашборд</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded {{#if (eq activeTab 'students')}}bg-primary bg-opacity-10 text-primary fw-medium{{else}}text-dark{{/if}}" href="/students">
+                    <i class="bi bi-people"></i>
+                    <span>Студенты</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded {{#if (eq activeTab 'upload')}}bg-primary bg-opacity-10 text-primary fw-medium{{else}}text-dark{{/if}}" href="/upload">
+                    <i class="bi bi-upload"></i>
+                    <span>Загрузка</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded {{#if (eq activeTab 'reports')}}bg-primary bg-opacity-10 text-primary fw-medium{{else}}text-dark{{/if}}" href="/reports">
+                    <i class="bi bi-file-text"></i>
+                    <span>Отчёты</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded {{#if (eq activeTab 'settings')}}bg-primary bg-opacity-10 text-primary fw-medium{{else}}text-dark{{/if}}" href="/settings">
+                    <i class="bi bi-gear"></i>
+                    <span>Настройки</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</aside>
+
+<!-- Mobile Sidebar -->
+<div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title fw-semibold" id="sidebarMenuLabel">Меню</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+        <nav class="p-3">
+            <ul class="nav flex-column gap-1">
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded {{#if (eq activeTab 'dashboard')}}bg-primary bg-opacity-10 text-primary fw-medium{{else}}text-dark{{/if}}" href="/dashboard" data-bs-dismiss="offcanvas">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Дашборд</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded {{#if (eq activeTab 'students')}}bg-primary bg-opacity-10 text-primary fw-medium{{else}}text-dark{{/if}}" href="/students" data-bs-dismiss="offcanvas">
+                        <i class="bi bi-people"></i>
+                        <span>Студенты</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded {{#if (eq activeTab 'upload')}}bg-primary bg-opacity-10 text-primary fw-medium{{else}}text-dark{{/if}}" href="/upload" data-bs-dismiss="offcanvas">
+                        <i class="bi bi-upload"></i>
+                        <span>Загрузка</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded {{#if (eq activeTab 'reports')}}bg-primary bg-opacity-10 text-primary fw-medium{{else}}text-dark{{/if}}" href="/reports" data-bs-dismiss="offcanvas">
+                        <i class="bi bi-file-text"></i>
+                        <span>Отчёты</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded {{#if (eq activeTab 'settings')}}bg-primary bg-opacity-10 text-primary fw-medium{{else}}text-dark{{/if}}" href="/settings" data-bs-dismiss="offcanvas">
+                        <i class="bi bi-gear"></i>
+                        <span>Настройки</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>

@@ -1,0 +1,15 @@
+body {
+    min-height: 100vh;
+}
+
+.nav-link {
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.295) !important;
+}
+
+.nav-link.bg-primary.bg-opacity-10 {
+    background-color: rgba(13, 110, 253, 0.1) !important;
+}
