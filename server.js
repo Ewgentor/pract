@@ -135,15 +135,16 @@ app.get('/students', async (req, res) => {
   const selectedGroup = req.query.group;
   const sortBy = req.query.sortBy || 'name';
   const sortOrder = req.query.sortOrder || 'asc';
+  const totalStudentsCount = await Students.countDocuments({});
   const search = req.query.search || '';
 
-  const totalStudentsCount = await Students.countDocuments({});
-
-  // Фильтрация по группе и поиску
   const query = {};
   if (selectedGroup && selectedGroup !== 'Все группы') {
     query.group = selectedGroup;
   }  
+  if(search !== ''){
+    query.name = {$regex: search, $options: 'i'}
+  }
 
   const sortDirection = sortOrder === 'desc' ? -1 : 1;
   const sortOptions = {};
@@ -198,6 +199,11 @@ app.get('/students', async (req, res) => {
     })();
     student.total_score = student.academic_score + student.scientific_score + student.creative_score + student.sports_score + student.social_score;
   });
+
+  if (sortBy === 'total_score') {
+    const dir = sortOrder === 'desc' ? -1 : 1;
+    students.sort((a, b) => (a.total_score - b.total_score) * dir);
+  }
 
   res.render('pages/students', {
     totalStudentsCount,
