@@ -1,41 +1,12 @@
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://127.0.0.1:27017/stipendia');
-
-const Students = mongoose.model('Students', new mongoose.Schema({
-  group: String,
-  name: String,
-  a_student: Boolean,
-  olimpiads: [
-    {pType: String, place: Number}
-  ],
-  ed_programms: Number,
-  research_contests: [
-    {pType: String, place: Number}
-  ],
-  publications: [
-    {rank: Boolean}
-  ],
-  reports: Number,
-  create_contests: [
-    {pType: String, place: Number}
-  ],
-  sports_titles: [ Boolean ], // [Мастер спорта, Кандидат в мастера спорта]
-  sports_championships: [
-    {pType:String, place: Number}
-  ],
-  sports_popularization: Number,
-  starosta: Boolean,
-  profsoyuz: Boolean,
-  volunteer: Boolean,
-  cultural_events: Number
-}));
+const { Students } = require('./models');
 
 groups = ["PI-301", "PI-302", "PI-303", "IVT-101", "IVT-102", "IST-301", "IST-302"];
 names = {male: ["Иван", "Пётр", "Василий", "Илья", "Евгений", "Алексей", "Александр", "Даниил", "Эдуард"], female: ["Ивана", "Попова", "Евгения", "Александра", "Дарья", "Элеонора", "Виктория", "Анна", "Мария"]};
 surnames = {male: ["Иванов", "Петров", "Сидоров", "Смирнов", "Попов", "Юров", "Торшин", "Емельянов"], female: ["Иванова", "Петрова", "Сидорова", "Смирнова", "Попова", "Вавилова", "Жилина", "Заец", "Высоцкая", "Гущина"]};
 types_contests = ["Int", "Rus", "Uni"];
 types_sports = ["Int", "Rus", "CFO", "Regional"];
-
 
 
 function studentGenerator(number) {
