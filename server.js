@@ -27,7 +27,7 @@ const Students = mongoose.model('Students', new mongoose.Schema({
   create_contests: [
     {pType: String, place: Number}
   ],
-  sports_title: String,
+  sports_titles: [ Boolean ], // [Мастер спорта, Кандидат в мастера спорта]
   sports_championships: [
     {pType:String, place: Number}
   ],
@@ -59,7 +59,7 @@ const Weights = mongoose.model('Weights', new mongoose.Schema({
     Uni: {first: {type: Number, default: 3}, second: {type: Number, default: 2}, third: {type: Number, default: 1}}
   },
   sports_title: [
-    {"Master of Sports": {type: Number, default: 8}, "National Team Member": {type: Number, default: 8}}
+    {type: Number, default: [8, 8]} // [Мастер спорта, Кандидат в мастера спорта]
   ],
   sports_championships: {
     Int: {type: Number, default: 8},
@@ -77,7 +77,7 @@ const Weights = mongoose.model('Weights', new mongoose.Schema({
 
 Weights.findOne().then(doc => {
   if (!doc) {
-    const defaultWeights = new weights({});
+    const defaultWeights = new Weights();
     defaultWeights.save().then(() => console.log('Стандартные веса добавлены'));
   } else {
     console.log('Веса уже существуеют');
@@ -148,15 +148,59 @@ app.get('/students', async (req, res) => {
   sortOptions[sortBy] = sortDirection;
   
   const students = await Students.find(query).sort(sortOptions);
-  const weights = await Weights.find();
-
-  let academic_score = 0;
-  let scientific_score = 0;
-  let creative_score = 0;
-  let sports_score = 0;
-  let social_score = 0;
-  let total_score = 0;
-
+  const weights = await Weights.findOne();
+  students.forEach(student => {
+    student.academic_score = (() => {
+      let score = 0;
+      // Академическая успеваемость
+      score += student.a_student ? weights.a_student[0] : weights.a_student[1];
+      score += calculateContestScore(student.olimpiads, 'olimpiads', weights);
+      score += (student.ed_programms || 0) * weights.ed_programms;
+      return score;
+    })();
+    student.scientific_score = (() => {
+      let score = 0;
+      // Научная деятельность
+      score += calculateContestScore(student.research_contests, 'research_contests', weights);
+      student.publications.forEach(pub => {
+        score += pub.rank ? weights.publications[0] : weights.publications[1];
+      });
+      score += (student.reports || 0) * weights.reports;
+      return score;
+    })();
+    student.creative_score = (() => {
+      let score = 0;
+      // Творческая активность
+      score += calculateContestScore(student.create_contests, 'create_contests', weights);
+      return score;
+    })();
+    student.sports_score = (() => {
+      let score = 0;
+      // Спортивные достижения
+      if (student.sports_titles[0]) {
+        score += weights.sports_title[0];
+      }
+      if (student.sports_titles[1]) {
+        score += weights.sports_title[1];
+      }
+      student.sports_championships.forEach(champ => {
+        score += champ.place ? weights.sports_championships[champ.pType] : weights.sports_championships['other'];
+      });
+      score += (student.sports_popularization || 0) * weights.sports_popularization;
+      return score;
+    })();
+    student.social_score = (() => {
+      let score = 0;
+      // Общественная деятельность
+      score += student.starosta ? weights.starosta : 0;
+      score += student.profsoyuz ? weights.profsoyuz : 0;
+      score += student.volunteer ? weights.volunteer : 0;
+      score += (student.cultural_events || 0) * weights.cultural_events;
+      return score;
+    })();
+    student.total_score = student.academic_score + student.scientific_score + student.creative_score + student.sports_score + student.social_score;
+  });
+  console.log(students[0]);
 
   res.render('pages/students', {
     title: 'Студенты',
@@ -170,12 +214,12 @@ app.get('/students', async (req, res) => {
     students: students.map(student => ({
       group: student.group,
       name: student.name,
-      academic_score: academic_score,
-      scientific_score: scientific_score,
-      creative_score: creative_score,
-      sports_score: sports_score,
-      social_score: social_score,
-      total_score: total_score,
+      academic_score: student.academic_score,
+      scientific_score: student.scientific_score,
+      creative_score: student.creative_score,
+      sports_score: student.sports_score,
+      social_score: student.social_score,
+      total_score: student.total_score,
     })),
   });
 });
@@ -204,3 +248,24 @@ app.get('/settings', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Сервер запущен на http://localhost:${PORT}`);
 });
+
+
+function calculateContestScore(contests, contest_type, weights) {
+  let score = 0;
+  contests.forEach(contest => {
+    if (weights[contest_type][contest.pType]) {
+      switch (contest.place) {
+        case 1:
+          score += weights[contest_type][contest.pType].first;
+          break;
+        case 2:
+          score += weights[contest_type][contest.pType].second;
+          break;
+        case 3:
+          score += weights[contest_type][contest.pType].third;
+          break;
+      }
+    }
+  });
+  return score;
+}

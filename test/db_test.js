@@ -34,7 +34,6 @@ groups = ["PI-301", "PI-302", "PI-303", "IVT-101", "IVT-102", "IST-301", "IST-30
 names = ["Ivan Ivanov", "Petr Petrov", "Sidor Sidorov", "Anna Ivanova", "Elena Petrova", "Maria Sidorova", "Dmitry Smirnov", "Olga Kuznetsova", "Alexey Popov", "Natalia Lebedeva"];
 types_contests = ["Int", "Rus", "Uni"];
 types_sports = ["Int", "Rus", "CFO", "Regional"];
-sports_titles = ["Master of Sports", "National Team Member"];
 
 
 
@@ -75,7 +74,7 @@ function studentGenerator(number) {
                 }
                 return arr;
             })(),
-            sports_title: sports_titles[Math.floor(Math.random() * sports_titles.length)],
+            sports_titles: [ Math.random() > 0.5, Math.random() > 0.5 ],
             sports_championships: (() => {
                 arr = [];
                 for (let j = 0; j < Math.floor(Math.random() * 3); j++) {
