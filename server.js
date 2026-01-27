@@ -184,7 +184,7 @@ app.get('/students', async (req, res) => {
         score += weights.sports_title[1];
       }
       student.sports_championships.forEach(champ => {
-        score += champ.place ? weights.sports_championships[champ.pType] : weights.sports_championships['other'];
+        score += champ.place === 1 ? weights.sports_championships[champ.pType] : weights.sports_championships['other'];
       });
       score += (student.sports_popularization || 0) * weights.sports_popularization;
       return score;
