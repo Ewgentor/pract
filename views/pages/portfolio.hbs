@@ -6,13 +6,34 @@
                 <div class=" d-flex align-items-center">
                     <a class=" link-secondary" href="/students"><i class="bi bi-arrow-90deg-down">Назад к списку</i></a>
                 </div>
-                <div class=" card-body py-0 px-4 d-flex">
-                    <h2 class="">{{student.name}}</h2>
-                    <p class=" text-secondary">{{student.group}}</p>
+                <div class=" card-body py-0 px-4 d-flex justify-content-between">
                     <div>
-                        <p class="m-0">{{student.total_score}}</p>
+                        <h2 class="">{{student.name}}</h2>
+                        <p class=" text-secondary m-0">{{student.group}}</p>
+                    </div>
+                    <div class=" d-flex align-items-center text-light">
+                        <h4 class="m-0 py-2 px-3 bg-primary rounded-4">
+                            {{student.total_score}} баллов(а)
+                        </h4>
                     </div>
                 </div>
+            </div>
+            <div class="p-2 mt-5 rounded-4 d-flex justify-content-around bg-body-secondary">
+                <button class="btn portfolio-tab border-0 rounded-5" data-tab="academic">
+                    <p class="mb-0">Учебная деятельность</p>
+                </button>
+                <button class="btn portfolio-tab border-0 rounded-5" data-tab="scientific">
+                    <p class="mb-0">Научно деятельность</p>
+                </button>
+                <button class="btn portfolio-tab border-0 rounded-5" data-tab="creative">
+                    <p class="mb-0">Творческая деятельность</p>
+                </button>
+                <button class="btn portfolio-tab border-0 rounded-5" data-tab="sports">
+                    <p class="mb-0">Спортивная деятельность</p>
+                </button>
+                <button class="btn portfolio-tab border-0 rounded-5" data-tab="social">
+                    <p class="mb-0">Общественная деятельность</p>
+                </button>
             </div>
             <div class="card-body">
 

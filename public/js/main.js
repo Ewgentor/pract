@@ -17,4 +17,21 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = url.toString();
         });
     }
+
+    const portfolioTabs = document.querySelectorAll('.portfolio-tab');
+    if (portfolioTabs.length > 0) {
+        if (portfolioTabs[0]) {
+            portfolioTabs[0].classList.add('active', 'bg-white');
+        }
+
+        portfolioTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                portfolioTabs.forEach(btn => {
+                    btn.classList.remove('active', 'bg-white');
+                });
+                
+                this.classList.add('active', 'bg-white');
+            });
+        });
+    }
 });
