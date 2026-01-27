@@ -58,9 +58,7 @@ const Weights = mongoose.model('Weights', new mongoose.Schema({
     Rus: {first: {type: Number, default: 4}, second: {type: Number, default: 3}, third: {type: Number, default: 2}},
     Uni: {first: {type: Number, default: 3}, second: {type: Number, default: 2}, third: {type: Number, default: 1}}
   },
-  sports_title: [
-    {type: Number, default: [8, 8]} // [Мастер спорта, Кандидат в мастера спорта]
-  ],
+  sports_titles: {type: [Number], default: [8, 8]}, // [Мастер спорта, Кандидат в мастера спорта],
   sports_championships: {
     Int: {type: Number, default: 8},
     Rus: {type: Number, default: 6},
@@ -153,52 +151,7 @@ app.get('/students', async (req, res) => {
   const students = await Students.find(query).sort(sortOptions).limit(15);
 
   const weights = await Weights.findOne();
-  students.forEach(student => {
-    student.academic_score = (() => {
-      let score = 0;
-      score += student.a_student ? weights.a_student[0] : weights.a_student[1];
-      score += calculateContestScore(student.olimpiads, 'olimpiads', weights);
-      score += (student.ed_programms || 0) * weights.ed_programms;
-      return score;
-    })();
-    student.scientific_score = (() => {
-      let score = 0;
-      score += calculateContestScore(student.research_contests, 'research_contests', weights);
-      student.publications.forEach(pub => {
-        score += pub.rank ? weights.publications[0] : weights.publications[1];
-      });
-      score += (student.reports || 0) * weights.reports;
-      return score;
-    })();
-    student.creative_score = (() => {
-      let score = 0;
-      score += calculateContestScore(student.create_contests, 'create_contests', weights);
-      return score;
-    })();
-    student.sports_score = (() => {
-      let score = 0;
-      if (student.sports_titles[0]) {
-        score += weights.sports_title[0];
-      }
-      if (student.sports_titles[1]) {
-        score += weights.sports_title[1];
-      }
-      student.sports_championships.forEach(champ => {
-        score += champ.place === 1 ? weights.sports_championships[champ.pType] : weights.sports_championships['other'];
-      });
-      score += (student.sports_popularization || 0) * weights.sports_popularization;
-      return score;
-    })();
-    student.social_score = (() => {
-      let score = 0;
-      score += student.starosta ? weights.starosta : 0;
-      score += student.profsoyuz ? weights.profsoyuz : 0;
-      score += student.volunteer ? weights.volunteer : 0;
-      score += (student.cultural_events || 0) * weights.cultural_events;
-      return score;
-    })();
-    student.total_score = student.academic_score + student.scientific_score + student.creative_score + student.sports_score + student.social_score;
-  });
+  students.forEach(student => {countScore(student, weights)});
 
   if (sortBy === 'total_score') {
     const dir = sortOrder === 'desc' ? -1 : 1;
@@ -253,8 +206,9 @@ app.get('/settings', (req, res) => {
 
 app.get('/portfolio', async (req, res) => {
   const studentId = req.query.id;
-  const student = await Students.findById(studentId);
-
+  const student = await Students.findById(studentId).lean();
+  const weights = await Weights.findOne();
+  countScore(student, weights)
   
 
   console.log(student);
@@ -262,7 +216,7 @@ app.get('/portfolio', async (req, res) => {
   res.render('pages/portfolio', {
     title: 'Портфолио',
     activeTab: '',
-    student: {...student._doc},
+    student,
   });
 });
 
@@ -289,4 +243,51 @@ function calculateContestScore(contests, contest_type, weights) {
     }
   });
   return score;
+}
+
+function countScore(student, weights) {
+  student.academic_score = (() => {
+      let score = 0;
+      score += student.a_student ? weights.a_student[0] : weights.a_student[1];
+      score += calculateContestScore(student.olimpiads, 'olimpiads', weights);
+      score += (student.ed_programms || 0) * weights.ed_programms;
+      return score;
+    })();
+    student.scientific_score = (() => {
+      let score = 0;
+      score += calculateContestScore(student.research_contests, 'research_contests', weights);
+      student.publications.forEach(pub => {
+        score += pub.rank ? weights.publications[0] : weights.publications[1];
+      });
+      score += (student.reports || 0) * weights.reports;
+      return score;
+    })();
+    student.creative_score = (() => {
+      let score = 0;
+      score += calculateContestScore(student.create_contests, 'create_contests', weights);
+      return score;
+    })();
+    student.sports_score = (() => {
+      let score = 0;
+      if (student.sports_titles[0]) {
+        score += weights.sports_title[0];
+      }
+      if (student.sports_titles[1]) {
+        score += weights.sports_title[1];
+      }
+      student.sports_championships.forEach(champ => {
+        score += champ.place === 1 ? weights.sports_championships[champ.pType] : weights.sports_championships['other'];
+      });
+      score += (student.sports_popularization || 0) * weights.sports_popularization;
+      return score;
+    })();
+    student.social_score = (() => {
+      let score = 0;
+      score += student.starosta ? weights.starosta : 0;
+      score += student.profsoyuz ? weights.profsoyuz : 0;
+      score += student.volunteer ? weights.volunteer : 0;
+      score += (student.cultural_events || 0) * weights.cultural_events;
+      return score;
+    })();
+    student.total_score = student.academic_score + student.scientific_score + student.creative_score + student.sports_score + student.social_score;
 }

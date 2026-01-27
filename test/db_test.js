@@ -19,7 +19,7 @@ const Students = mongoose.model('Students', new mongoose.Schema({
   create_contests: [
     {pType: String, place: Number}
   ],
-  sports_title: String,
+  sports_titles: [ Boolean ], // [Мастер спорта, Кандидат в мастера спорта]
   sports_championships: [
     {pType:String, place: Number}
   ],

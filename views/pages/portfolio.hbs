@@ -2,17 +2,20 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-body d-flex">
+            <div class="card-body d-flex pb-0">
                 <div class=" d-flex align-items-center">
                     <a class=" link-secondary" href="/students"><i class="bi bi-arrow-90deg-down">Назад к списку</i></a>
                 </div>
-                <div class=" card-body py-0 px-4">
-                    <h2>{{student.name}}</h2>
+                <div class=" card-body py-0 px-4 d-flex">
+                    <h2 class="">{{student.name}}</h2>
                     <p class=" text-secondary">{{student.group}}</p>
+                    <div>
+                        <p class="m-0">{{student.total_score}}</p>
+                    </div>
                 </div>
             </div>
             <div class="card-body">
-                
+
             </div>
         </div>
     </div>
