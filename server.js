@@ -262,7 +262,7 @@ app.get('/portfolio', async (req, res) => {
   res.render('pages/portfolio', {
     title: 'Портфолио',
     activeTab: '',
-    student,
+    student: {...student._doc},
   });
 });
 
