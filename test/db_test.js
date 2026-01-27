@@ -31,7 +31,8 @@ const Students = mongoose.model('Students', new mongoose.Schema({
 }));
 
 groups = ["PI-301", "PI-302", "PI-303", "IVT-101", "IVT-102", "IST-301", "IST-302"];
-names = ["Ivan Ivanov", "Petr Petrov", "Sidor Sidorov", "Anna Ivanova", "Elena Petrova", "Maria Sidorova", "Dmitry Smirnov", "Olga Kuznetsova", "Alexey Popov", "Natalia Lebedeva"];
+names = {male: ["Иван", "Пётр", "Василий", "Илья", "Евгений", "Алексей", "Александр", "Даниил", "Эдуард"], female: ["Ивана", "Попова", "Евгения", "Александра", "Дарья", "Элеонора", "Виктория", "Анна", "Мария"]};
+surnames = {male: ["Иванов", "Петров", "Сидоров", "Смирнов", "Попов", "Юров", "Торшин", "Емельянов"], female: ["Иванова", "Петрова", "Сидорова", "Смирнова", "Попова", "Вавилова", "Жилина", "Заец", "Высоцкая", "Гущина"]};
 types_contests = ["Int", "Rus", "Uni"];
 types_sports = ["Int", "Rus", "CFO", "Regional"];
 
@@ -41,7 +42,8 @@ function studentGenerator(number) {
     for (let i = 0; i < number; i++) {
         const student = new Students({
             group: groups[Math.floor(Math.random() * groups.length)],
-            name: names[Math.floor(Math.random() * names.length)],
+            name: Math.random() > 0.5 ? names.male[Math.floor(Math.random() * names.male.length)] + " " + surnames.male[Math.floor(Math.random() * surnames.male.length)] :
+                names.female[Math.floor(Math.random() * names.female.length)] + " " + surnames.female[Math.floor(Math.random() * surnames.female.length)],
             a_student: Math.random() > 0.5,
             olimpiads: (() => {
                 arr = [];
