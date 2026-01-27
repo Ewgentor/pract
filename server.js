@@ -135,24 +135,26 @@ app.get('/students', async (req, res) => {
   const selectedGroup = req.query.group;
   const sortBy = req.query.sortBy || 'name';
   const sortOrder = req.query.sortOrder || 'asc';
-  
-  // Фильтрация по группе
-  let query = {};
+  const search = req.query.search || '';
+
+  const totalStudentsCount = await Students.countDocuments({});
+
+  // Фильтрация по группе и поиску
+  const query = {};
   if (selectedGroup && selectedGroup !== 'Все группы') {
     query.group = selectedGroup;
-  }
-  
-  // Определение направления сортировки
+  }  
+
   const sortDirection = sortOrder === 'desc' ? -1 : 1;
   const sortOptions = {};
   sortOptions[sortBy] = sortDirection;
-  
-  const students = await Students.find(query).sort(sortOptions);
+
+  const students = await Students.find(query).sort(sortOptions).limit(15);
+
   const weights = await Weights.findOne();
   students.forEach(student => {
     student.academic_score = (() => {
       let score = 0;
-      // Академическая успеваемость
       score += student.a_student ? weights.a_student[0] : weights.a_student[1];
       score += calculateContestScore(student.olimpiads, 'olimpiads', weights);
       score += (student.ed_programms || 0) * weights.ed_programms;
@@ -160,7 +162,6 @@ app.get('/students', async (req, res) => {
     })();
     student.scientific_score = (() => {
       let score = 0;
-      // Научная деятельность
       score += calculateContestScore(student.research_contests, 'research_contests', weights);
       student.publications.forEach(pub => {
         score += pub.rank ? weights.publications[0] : weights.publications[1];
@@ -170,13 +171,11 @@ app.get('/students', async (req, res) => {
     })();
     student.creative_score = (() => {
       let score = 0;
-      // Творческая активность
       score += calculateContestScore(student.create_contests, 'create_contests', weights);
       return score;
     })();
     student.sports_score = (() => {
       let score = 0;
-      // Спортивные достижения
       if (student.sports_titles[0]) {
         score += weights.sports_title[0];
       }
@@ -191,7 +190,6 @@ app.get('/students', async (req, res) => {
     })();
     student.social_score = (() => {
       let score = 0;
-      // Общественная деятельность
       score += student.starosta ? weights.starosta : 0;
       score += student.profsoyuz ? weights.profsoyuz : 0;
       score += student.volunteer ? weights.volunteer : 0;
@@ -200,16 +198,17 @@ app.get('/students', async (req, res) => {
     })();
     student.total_score = student.academic_score + student.scientific_score + student.creative_score + student.sports_score + student.social_score;
   });
-  console.log(students[0]);
 
   res.render('pages/students', {
+    totalStudentsCount,
     title: 'Студенты',
     activeTab: 'students',
     selectedGroup: selectedGroup || 'Все группы',
-    sortBy: sortBy,
-    sortOrder: sortOrder,
+    sortBy,
+    sortOrder,
+    search,
     groups: groups.map(group => ({
-      group: group,
+      group,
     })),
     students: students.map(student => ({
       group: student.group,
