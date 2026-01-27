@@ -217,6 +217,7 @@ app.get('/students', async (req, res) => {
       group,
     })),
     students: students.map(student => ({
+      id: student._id,
       group: student.group,
       name: student.name,
       academic_score: student.academic_score,
@@ -247,6 +248,21 @@ app.get('/settings', (req, res) => {
   res.render('pages/settings', {
     title: 'Настройки',
     activeTab: 'settings'
+  });
+});
+
+app.get('/portfolio', async (req, res) => {
+  const studentId = req.query.id;
+  const student = await Students.findById(studentId);
+
+  
+
+  console.log(student);
+  
+  res.render('pages/portfolio', {
+    title: 'Портфолио',
+    activeTab: '',
+    student,
   });
 });
 
