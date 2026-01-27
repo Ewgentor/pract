@@ -270,10 +270,10 @@ function countScore(student, weights) {
     student.sports_score = (() => {
       let score = 0;
       if (student.sports_titles[0]) {
-        score += weights.sports_title[0];
+        score += weights.sports_titles[0];
       }
       if (student.sports_titles[1]) {
-        score += weights.sports_title[1];
+        score += weights.sports_titles[1];
       }
       student.sports_championships.forEach(champ => {
         score += champ.place === 1 ? weights.sports_championships[champ.pType] : weights.sports_championships['other'];
