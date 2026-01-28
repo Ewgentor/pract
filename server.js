@@ -142,17 +142,184 @@ app.get('/settings', (req, res) => {
 
 app.get('/portfolio', async (req, res) => {
   const studentId = req.query.id;
+  if (!studentId) {
+    return res.status(400).send('ID студента не указан');
+  }
+
   const student = await Students.findById(studentId).lean();
-  const weights = await Weights.findOne();
-  countScore(student, weights)
-  
+  if (!student) {
+    return res.status(404).send('Студент не найден');
+  }
 
   console.log(student);
   
+  const weights = await Weights.findOne();
+  countScore(student, weights);
+
+  const levelLabels = {
+    Int: 'Международные',
+    Rus: 'Российские / областные',
+    Uni: 'Вузовские',
+  };
+
+  const getLevelLabel = (pType) => levelLabels[pType] || pType;
+
+  const getContestScore = (contestType, pType, place) => {
+    const table = weights[contestType] && weights[contestType][pType];
+    if (!table) return 0;
+    switch (place) {
+      case 1:
+        return table.first || 0;
+      case 2:
+        return table.second || 0;
+      case 3:
+        return table.third || 0;
+      default:
+        return 0;
+    }
+  };
+
+  // Подготовка карточек по видам деятельности
+  const academicActivities = [];
+  const scientificActivities = [];
+  const creativeActivities = [];
+  const sportsActivities = [];
+  const socialActivities = [];
+
+  // Учебная деятельность
+  academicActivities.push({
+  title: student.a_student ? 'Отличник' : 'Хорошист',
+  description: student.a_student
+    ? 'Высокая учебная успеваемость'
+    : 'Хорошая учебная успеваемость',
+  score: student.a_student
+    ? (weights.a_student[0] || 0)
+    : (weights.a_student[1] || 0),
+  });
+  (student.olimpiads || []).forEach(o => {
+    academicActivities.push({
+      title: 'Предметные учебные олимпиады, конкурсы',
+      subtitle: getLevelLabel(o.pType),
+      description: `Место: ${o.place}`,
+      score: getContestScore('olimpiads', o.pType, o.place),
+    });
+  });
+  if (student.ed_programms > 0) {
+    academicActivities.push({
+      title: 'Образовательные программы',
+      description: `Участий: ${student.ed_programms}`,
+      score: (student.ed_programms || 0) * (weights.ed_programms || 0),
+    });
+  }
+
+  // Научная деятельность
+  (student.research_contests || []).forEach(c => {
+    scientificActivities.push({
+      title: 'Научный конкурс',
+      subtitle: getLevelLabel(c.pType),
+      description: `Место: ${c.place}`,
+      score: getContestScore('research_contests', c.pType, c.place),
+    });
+  });
+  (student.publications || []).forEach((p, idx) => {
+    scientificActivities.push({
+      title: 'Публикация',
+      description: p.rank ? 'ВАК / РИНЦ' : 'Прочее издание',
+      extra: `№${idx + 1}`,
+      score: p.rank
+        ? (weights.publications && weights.publications[0]) || 0
+        : (weights.publications && weights.publications[1]) || 0,
+    });
+  });
+  if (student.reports > 0) {
+    scientificActivities.push({
+      title: 'Доклады / выступления',
+      description: `Количество: ${student.reports}`,
+      score: (student.reports || 0) * (weights.reports || 0),
+    });
+  }
+
+  // Творческая деятельность
+  (student.create_contests || []).forEach(c => {
+    creativeActivities.push({
+      title: 'Творческий конкурс',
+      subtitle: getLevelLabel(c.pType),
+      description: `Место: ${c.place}`,
+      score: getContestScore('create_contests', c.pType, c.place),
+    });
+  });
+
+  // Спортивная деятельность
+  if (student.sports_titles && student.sports_titles[0]) {
+    sportsActivities.push({
+      title: 'Мастер спорта',
+      score: (weights.sports_titles && weights.sports_titles[0]) || 0,
+    });
+  }
+  if (student.sports_titles && student.sports_titles[1]) {
+    sportsActivities.push({
+      title: 'Кандидат в мастера спорта',
+      score: (weights.sports_titles && weights.sports_titles[1]) || 0,
+    });
+  }
+  (student.sports_championships || []).forEach(c => {
+    let score = 0;
+    if (weights.sports_championships && weights.sports_championships[c.pType]) {
+      score = c.place === 1
+        ? weights.sports_championships[c.pType]
+        : weights.sports_championships.other || 0;
+    }
+    sportsActivities.push({
+      title: 'Соревнования',
+      subtitle: getLevelLabel(c.pType),
+      description: `Место: ${c.place}`,
+      score,
+    });
+  });
+  if (student.sports_popularization > 0) {
+    sportsActivities.push({
+      title: 'Популяризация спорта',
+      description: `Активностей: ${student.sports_popularization}`,
+      score: (student.sports_popularization || 0) * (weights.sports_popularization || 0),
+    });
+  }
+
+  // Общественная деятельность
+  if (student.starosta) {
+    socialActivities.push({
+      title: 'Староста группы',
+      score: weights.starosta || 0,
+    });
+  }
+  if (student.profsoyuz) {
+    socialActivities.push({
+      title: 'Актив профсоюза',
+      score: weights.profsoyuz || 0,
+    });
+  }
+  if (student.volunteer) {
+    socialActivities.push({
+      title: 'Волонтёрская деятельность',
+      score: weights.volunteer || 0,
+    });
+  }
+  if (student.cultural_events > 0) {
+    socialActivities.push({
+      title: 'Профориентационная работа, работа в летних лагерях',
+      description: `Участий: ${student.cultural_events}`,
+      score: (student.cultural_events || 0) * (weights.cultural_events || 0),
+    });
+  }
+
   res.render('pages/portfolio', {
     title: 'Портфолио',
     activeTab: '',
     student,
+    academicActivities,
+    scientificActivities,
+    creativeActivities,
+    sportsActivities,
+    socialActivities,
   });
 });
 
