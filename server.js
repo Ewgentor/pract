@@ -133,11 +133,52 @@ app.get('/reports', (req, res) => {
   });
 });
 
-app.get('/settings', (req, res) => {
+app.get('/settings', async (req, res) => {
+  const weights = await Weights.findOne().lean();
   res.render('pages/settings', {
     title: 'Настройки',
-    activeTab: 'settings'
+    activeTab: 'settings',
+    weights,
   });
+});
+
+app.post('/settings', async (req, res) => {
+  const weightsData = req.body;
+  let weights = await Weights.updateOne({}, {
+    a_student: [Number(weightsData.a_student_yes), Number(weightsData.a_student_no)],
+    olimpiads: {
+      Int: { first: Number(weightsData.olimpiads_int_first), second: Number(weightsData.olimpiads_int_second), third: Number(weightsData.olimpiads_int_third) },
+      Rus: { first: Number(weightsData.olimpiads_rus_first), second: Number(weightsData.olimpiads_rus_second), third: Number(weightsData.olimpiads_rus_third) },
+      Uni: { first: Number(weightsData.olimpiads_uni_first), second: Number(weightsData.olimpiads_uni_second), third: Number(weightsData.olimpiads_uni_third) }
+    },
+    ed_programms: Number(weightsData.ed_programms),
+    research_contests: {
+      Int: { first: Number(weightsData.research_contests_int_first), second: Number(weightsData.research_contests_int_second), third: Number(weightsData.research_contests_int_third) },
+      Rus: { first: Number(weightsData.research_contests_rus_first), second: Number(weightsData.research_contests_rus_second), third: Number(weightsData.research_contests_rus_third) },
+      Uni: { first: Number(weightsData.research_contests_uni_first), second: Number(weightsData.research_contests_uni_second), third: Number(weightsData.research_contests_uni_third) }
+    },
+    publications: [Number(weightsData.publications_vak), Number(weightsData.publications_other)],
+    reports: Number(weightsData.reports),
+    create_contests: {
+      Int: { first: Number(weightsData.create_contests_int_first), second: Number(weightsData.create_contests_int_second), third: Number(weightsData.create_contests_int_third) },
+      Rus: { first: Number(weightsData.create_contests_rus_first), second: Number(weightsData.create_contests_rus_second), third: Number(weightsData.create_contests_rus_third) },
+      Uni: { first: Number(weightsData.create_contests_uni_first), second: Number(weightsData.create_contests_uni_second), third: Number(weightsData.create_contests_uni_third) }
+    },
+    sports_titles: [Number(weightsData.sports_titles_master), Number(weightsData.sports_titles_candidate)],
+    sports_championships: {
+      Int: Number(weightsData.sports_championships_Int),
+      Rus: Number(weightsData.sports_championships_Rus),
+      CFO: Number(weightsData.sports_championships_CFO),
+      Regional: Number(weightsData.sports_championships_Regional),
+      other: Number(weightsData.sports_championships_other)
+    },
+    sports_popularization: Number(weightsData.sports_popularization),
+    starosta: Number(weightsData.starosta),
+    profsoyuz: Number(weightsData.profsoyuz),
+    volunteer: Number(weightsData.volunteer),
+    cultural_events: Number(weightsData.cultural_events)
+  });
+  res.redirect('/settings');
 });
 
 app.get('/portfolio', async (req, res) => {
