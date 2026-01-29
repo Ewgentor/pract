@@ -28,6 +28,9 @@ const hbs = exphbs.create({
     eq: function(a, b) {
       return a === b;
     },
+    inc: function(value) {
+      return Number(value) + 1;
+    },
     ne: function(a, b) {
       return a !== b;
     },
@@ -57,11 +60,84 @@ app.get('/', (req, res) => {
   res.redirect('/dashboard');
 });
 
-app.get('/dashboard', (req, res) => {
-  res.render('pages/dashboard', {
-    title: 'Дашборд',
-    activeTab: 'dashboard'
-  });
+app.get('/dashboard', async (req, res) => {
+  try {
+    const weights = await Weights.findOne();
+    const students = await Students.find();
+
+    // Ensure fields exist to avoid runtime errors
+    students.forEach(s => {
+      s.olimpiads = s.olimpiads || [];
+      s.research_contests = s.research_contests || [];
+      s.create_contests = s.create_contests || [];
+      s.publications = s.publications || [];
+      s.sports_championships = s.sports_championships || [];
+      s.sports_titles = s.sports_titles || [false, false];
+      s.ed_programms = s.ed_programms || 0;
+      s.reports = s.reports || 0;
+      s.sports_popularization = s.sports_popularization || 0;
+      s.cultural_events = s.cultural_events || 0;
+    });
+
+    // Calculate scores for each student
+    students.forEach(student => { countScore(student, weights); });
+
+    const totalStudents = students.length;
+    const avgScore = totalStudents ? Math.round(students.reduce((acc, s) => acc + (s.total_score || 0), 0) / totalStudents) : 0;
+    const groups = Array.from(new Set(students.map(s => s.group).filter(Boolean)));
+    const groupsCount = groups.length;
+    const maxScore = students.length ? Math.max(...students.map(s => s.total_score || 0)) : 0;
+
+    const topStudents = students
+      .slice()
+      .sort((a, b) => (b.total_score || 0) - (a.total_score || 0))
+      .slice(0, 10)
+      .map(s => ({ id: s._id, name: s.name, group: s.group, total_score: s.total_score || 0 }));
+
+    // Category distribution totals
+    const categorySums = students.reduce((acc, s) => {
+      acc.academic += s.academic_score || 0;
+      acc.scientific += s.scientific_score || 0;
+      acc.creative += s.creative_score || 0;
+      acc.sports += s.sports_score || 0;
+      acc.social += s.social_score || 0;
+      return acc;
+    }, { academic: 0, scientific: 0, creative: 0, sports: 0, social: 0 });
+
+    const totalCategoryPoints = Object.values(categorySums).reduce((a, b) => a + b, 0) || 1;
+    const categoryDistribution = [
+      { label: 'Учебная', value: Math.round(categorySums.academic), percent: Math.round(categorySums.academic / totalCategoryPoints * 100), color: '#0d6efd' },
+      { label: 'Научная', value: Math.round(categorySums.scientific), percent: Math.round(categorySums.scientific / totalCategoryPoints * 100), color: '#6f42c1' },
+      { label: 'Творческая', value: Math.round(categorySums.creative), percent: Math.round(categorySums.creative / totalCategoryPoints * 100), color: '#fd7e14' },
+      { label: 'Спортивная', value: Math.round(categorySums.sports), percent: Math.round(categorySums.sports / totalCategoryPoints * 100), color: '#198754' },
+      { label: 'Общественная', value: Math.round(categorySums.social), percent: Math.round(categorySums.social / totalCategoryPoints * 100), color: '#0dcaf0' }
+    ];
+
+    // Groups distribution
+    const groupCounts = students.reduce((acc, s) => {
+      const g = s.group || 'Без группы';
+      acc[g] = (acc[g] || 0) + 1;
+      return acc;
+    }, {});
+    const groupsDistribution = Object.keys(groupCounts).map(group => ({ group, count: groupCounts[group], percent: Math.round(groupCounts[group] / (totalStudents || 1) * 100) }));
+
+    res.render('pages/dashboard', {
+      title: 'Дашборд',
+      activeTab: 'dashboard',
+      stats: {
+        totalStudents,
+        avgScore,
+        groupsCount,
+        maxScore
+      },
+      topStudents,
+      categoryDistribution,
+      groupsDistribution
+    });
+  } catch (err) {
+    console.error('Ошибка при формировании дашборда', err);
+    res.status(500).send('Ошибка сервера');
+  }
 });
 
 app.get('/students', async (req, res) => {
@@ -69,29 +145,64 @@ app.get('/students', async (req, res) => {
   const selectedGroup = req.query.group;
   const sortBy = req.query.sortBy || 'name';
   const sortOrder = req.query.sortOrder || 'asc';
-  const totalStudentsCount = await Students.countDocuments({});
   const search = req.query.search || '';
 
   const query = {};
   if (selectedGroup && selectedGroup !== 'Все группы') {
     query.group = selectedGroup;
-  }  
-  if(search !== ''){
-    query.name = {$regex: search, $options: 'i'}
+  }
+  if (search !== '') {
+    query.name = { $regex: search, $options: 'i' };
   }
 
-  const sortDirection = sortOrder === 'desc' ? -1 : 1;
-  const sortOptions = {};
-  sortOptions[sortBy] = sortDirection;
+  // Use filtered count
+  const totalStudentsCount = await Students.countDocuments(query);
 
-  const students = await Students.find(query).sort(sortOptions).limit(15);
-
+  const pageSize = 15;
   const weights = await Weights.findOne();
-  students.forEach(student => {countScore(student, weights)});
+
+  let students = [];
 
   if (sortBy === 'total_score') {
-    const dir = sortOrder === 'desc' ? -1 : 1;
-    students.sort((a, b) => (a.total_score - b.total_score) * dir);
+    // Need to compute total_score for all students before sorting
+    const all = await Students.find(query);
+    all.forEach(s => {
+      s.olimpiads = s.olimpiads || [];
+      s.research_contests = s.research_contests || [];
+      s.create_contests = s.create_contests || [];
+      s.publications = s.publications || [];
+      s.sports_championships = s.sports_championships || [];
+      s.sports_titles = s.sports_titles || [false, false];
+      s.ed_programms = s.ed_programms || 0;
+      s.reports = s.reports || 0;
+      s.sports_popularization = s.sports_popularization || 0;
+      s.cultural_events = s.cultural_events || 0;
+    });
+    all.forEach(student => { countScore(student, weights); });
+    if (sortOrder === 'desc') {
+      all.sort((a, b) => (b.total_score || 0) - (a.total_score || 0));
+    } else {
+      all.sort((a, b) => (a.total_score || 0) - (b.total_score || 0));
+    }
+    students = all.slice(0, pageSize);
+  } else {
+    const sortDirection = sortOrder === 'desc' ? -1 : 1;
+    const sortOptions = {};
+    sortOptions[sortBy] = sortDirection;
+    students = await Students.find(query).sort(sortOptions).limit(pageSize);
+    students.forEach(s => {
+      s.olimpiads = s.olimpiads || [];
+      s.research_contests = s.research_contests || [];
+      s.create_contests = s.create_contests || [];
+      s.publications = s.publications || [];
+      s.sports_championships = s.sports_championships || [];
+      s.sports_titles = s.sports_titles || [false, false];
+      s.ed_programms = s.ed_programms || 0;
+      s.reports = s.reports || 0;
+      s.sports_popularization = s.sports_popularization || 0;
+      s.cultural_events = s.cultural_events || 0;
+    });
+    students.forEach(student => { countScore(student, weights); });
   }
 
   res.render('pages/students', {
@@ -102,9 +213,7 @@ app.get('/students', async (req, res) => {
     sortBy,
     sortOrder,
     search,
-    groups: groups.map(group => ({
-      group,
-    })),
+    groups: groups.map(group => ({ group })),
     students: students.map(student => ({
       id: student._id,
       group: student.group,
