@@ -235,11 +235,122 @@ app.get('/upload', (req, res) => {
   });
 });
 
-app.get('/reports', (req, res) => {
+app.get('/reports', async (req, res) => {
+  const groups = await Students.distinct('group');
   res.render('pages/reports', {
     title: 'Отчёты',
-    activeTab: 'reports'
+    activeTab: 'reports',
+    groups: groups.filter(Boolean)
   });
+});
+
+app.get('/api/students-by-group', async (req, res) => {
+  try {
+    const group = req.query.group;
+    const query = group === 'all' ? {} : { group };
+    const students = await Students.find(query).select('_id name');
+    res.json(students.map(s => ({ id: s._id, name: s.name })));
+  } catch (err) {
+    console.error('Ошибка при получении студентов', err);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
+
+app.post('/reports/generate', async (req, res) => {
+  try {
+    const { reportType, group, studentId, includeCategories, includeAchievements } = req.body;
+    const weights = await Weights.findOne();
+    
+    let students = [];
+    let reportTitle = '';
+    let reportContent = '';
+
+    if (reportType === 'group') {
+      reportTitle = group === 'all' ? 'Отчёт по всем студентам' : `Отчёт по группе ${group}`;
+      const query = group === 'all' ? {} : { group };
+      students = await Students.find(query);
+    } else if (reportType === 'individual') {
+      // For individual reports, fetch only the selected student
+      const student = await Students.findById(studentId);
+      if (!student) {
+        return res.status(404).send('Студент не найден');
+      }
+      students = [student];
+      reportTitle = `Индивидуальный отчёт - ${student.name}`;
+    }
+
+    // Ensure fields exist
+    students.forEach(s => {
+      s.olimpiads = s.olimpiads || [];
+      s.research_contests = s.research_contests || [];
+      s.create_contests = s.create_contests || [];
+      s.publications = s.publications || [];
+      s.sports_championships = s.sports_championships || [];
+      s.sports_titles = s.sports_titles || [false, false];
+      s.ed_programms = s.ed_programms || 0;
+      s.reports = s.reports || 0;
+      s.sports_popularization = s.sports_popularization || 0;
+      s.cultural_events = s.cultural_events || 0;
+    });
+
+    // Calculate scores
+    students.forEach(student => { countScore(student, weights); });
+
+    // Sort by total_score descending
+    students.sort((a, b) => (b.total_score || 0) - (a.total_score || 0));
+
+    // Generate report content
+    reportContent = `${reportTitle}\n`;
+    reportContent += `Дата генерации: ${new Date().toLocaleDateString('ru-RU')}\n`;
+    reportContent += `${'='.repeat(80)}\n\n`;
+
+    students.forEach((student, idx) => {
+      reportContent += `${idx + 1}. ${student.name} (${student.group})\n`;
+      reportContent += `   Общий балл: ${student.total_score || 0}\n`;
+
+      if (includeCategories === 'on') {
+        reportContent += `   Учебная деятельность: ${Math.round(student.academic_score || 0)}\n`;
+        reportContent += `   Научная деятельность: ${Math.round(student.scientific_score || 0)}\n`;
+        reportContent += `   Творческая деятельность: ${Math.round(student.creative_score || 0)}\n`;
+        reportContent += `   Спортивная деятельность: ${Math.round(student.sports_score || 0)}\n`;
+        reportContent += `   Общественная деятельность: ${Math.round(student.social_score || 0)}\n`;
+      }
+
+      if (includeAchievements === 'on') {
+        const achievements = [];
+        
+        if (student.a_student) achievements.push('Отличник');
+        if (student.olimpiads.length > 0) achievements.push(`Олимпиады (${student.olimpiads.length})`);
+        if (student.research_contests.length > 0) achievements.push(`Научные конкурсы (${student.research_contests.length})`);
+        if (student.publications.length > 0) achievements.push(`Публикации (${student.publications.length})`);
+        if (student.reports > 0) achievements.push(`Доклады (${student.reports})`);
+        if (student.create_contests.length > 0) achievements.push(`Творческие конкурсы (${student.create_contests.length})`);
+        if (student.sports_championships.length > 0) achievements.push(`Спортивные чемпионаты (${student.sports_championships.length})`);
+        if (student.starosta) achievements.push('Староста');
+        if (student.profsoyuz) achievements.push('Профсоюз');
+        if (student.volunteer) achievements.push('Волонтёр');
+
+        if (achievements.length > 0) {
+          reportContent += `   Достижения: ${achievements.join(', ')}\n`;
+        }
+      }
+
+      reportContent += '\n';
+    });
+
+    reportContent += `${'='.repeat(80)}\n`;
+    reportContent += `Всего студентов: ${students.length}\n`;
+    reportContent += `Средний балл: ${students.length ? Math.round(students.reduce((acc, s) => acc + (s.total_score || 0), 0) / students.length) : 0}\n`;
+
+    // Set response headers for file download
+    const fileName = `report_${new Date().toISOString().split('T')[0]}_${Date.now()}.txt`;
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+    res.send(Buffer.from(reportContent, 'utf-8'));
+  } catch (err) {
+    console.error('Ошибка при генерации отчёта', err);
+    res.status(500).send('Ошибка при генерации отчёта');
+  }
 });
 
 app.get('/settings', async (req, res) => {

@@ -3,16 +3,57 @@ document.addEventListener('DOMContentLoaded', function() {
     // Инициализация Bootstrap компонентов и другая логика
     console.log('Приложение загружено');
 
-    // Закрытие мобильного sidebar при клике на ссылку
-    const sidebarLinks = document.querySelectorAll('#sidebarMenu .nav-link');
-    const offcanvasElement = document.getElementById('sidebarMenu');
-    if (offcanvasElement) {
-        const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                offcanvas.hide();
-            });
+    // Логика для отчётов - переключение между групповым и индивидуальным отчётом
+    const reportTypeRadios = document.querySelectorAll('input[name="reportType"]');
+    const reportGroupSelect = document.getElementById('report-group');
+    const individualStudentSection = document.getElementById('individual-student-section');
+    const reportStudentSelect = document.getElementById('report-student');
+
+    if (reportTypeRadios.length > 0) {
+        const updateReportType = () => {
+            const selectedType = document.querySelector('input[name="reportType"]:checked')?.value;
+            if (selectedType === 'individual') {
+                individualStudentSection.style.display = 'block';
+                // Загрузить студентов текущей группы
+                if (reportGroupSelect) {
+                    loadStudentsForGroup(reportGroupSelect.value);
+                }
+            } else {
+                individualStudentSection.style.display = 'none';
+                reportStudentSelect.innerHTML = '<option value="">-- Выберите студента --</option>';
+            }
+        };
+
+        reportTypeRadios.forEach(radio => {
+            radio.addEventListener('change', updateReportType);
         });
+
+        // Загрузка студентов при смене группы
+        if (reportGroupSelect) {
+            reportGroupSelect.addEventListener('change', function() {
+                const selectedType = document.querySelector('input[name="reportType"]:checked')?.value;
+                if (selectedType === 'individual') {
+                    loadStudentsForGroup(this.value);
+                }
+            });
+        }
+    }
+
+    async function loadStudentsForGroup(groupName) {
+        try {
+            const response = await fetch(`/api/students-by-group?group=${encodeURIComponent(groupName)}`);
+            const students = await response.json();
+            
+            reportStudentSelect.innerHTML = '<option value="">-- Выберите студента --</option>';
+            students.forEach(student => {
+                const option = document.createElement('option');
+                option.value = student.id;
+                option.textContent = student.name;
+                reportStudentSelect.appendChild(option);
+            });
+        } catch (err) {
+            console.error('Ошибка при загрузке студентов:', err);
+        }
     }
     
     // Фильтрация по группам
