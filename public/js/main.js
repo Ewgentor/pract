@@ -102,7 +102,49 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Логика полей popup для учебной / научной деятельности
+    // Логика добавления студента
+    const addStudentBtn = document.getElementById('addStudentBtn');
+    const addStudentForm = document.getElementById('addStudentForm');
+    const addStudentModal = document.getElementById('addStudentModal');
+
+    if (addStudentBtn) {
+        addStudentBtn.addEventListener('click', async function() {
+            const name = document.getElementById('studentName').value.trim();
+            const group = document.getElementById('studentGroup').value.trim();
+            const a_student = document.getElementById('studentAStudent').checked;
+
+            if (!name || !group) {
+                alert('Заполните все обязательные поля');
+                return;
+            }
+
+            try {
+                const response = await fetch('/students/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name,
+                        group,
+                        a_student
+                    })
+                });
+
+                if (response.ok) {
+                    // Закрыть modal и перезагрузить страницу
+                    const modal = bootstrap.Modal.getInstance(addStudentModal);
+                    modal.hide();
+                    window.location.reload();
+                } else {
+                    alert('Ошибка при добавлении студента');
+                }
+            } catch (err) {
+                console.error('Ошибка:', err);
+                alert('Ошибка при добавлении студента');
+            }
+        });
+    }
     const achievementType = document.getElementById('achievementType');
     const academicExtra = document.getElementById('academic-extra-fields');
     const academicSubtype = document.getElementById('academicSubtype');

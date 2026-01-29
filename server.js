@@ -233,6 +233,41 @@ app.get('/students', async (req, res) => {
   });
 });
 
+app.post('/students/add', async (req, res) => {
+  try {
+    const { name, group, a_student } = req.body;
+
+    if (!name || !group) {
+      return res.status(400).json({ error: 'Требуются имя и группа' });
+    }
+
+    const newStudent = new Students({
+      name,
+      group,
+      a_student: a_student || false,
+      olimpiads: [],
+      research_contests: [],
+      publications: [],
+      create_contests: [],
+      sports_championships: [],
+      sports_titles: [false, false],
+      ed_programms: 0,
+      reports: 0,
+      sports_popularization: 0,
+      cultural_events: 0,
+      starosta: false,
+      profsoyuz: false,
+      volunteer: false
+    });
+
+    await newStudent.save();
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Ошибка при добавлении студента', err);
+    res.status(500).json({ error: 'Ошибка при добавлении студента' });
+  }
+});
+
 app.get('/upload', async (req, res) => {
   const totalStudents = await Students.countDocuments({});
   res.render('pages/upload', {

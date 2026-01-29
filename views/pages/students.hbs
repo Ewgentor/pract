@@ -78,3 +78,37 @@
         </div>
     </div>
 </div>
+
+<!-- Modal добавления студента -->
+<div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addStudentLabel">Добавить нового студента</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addStudentForm">
+                    <div class="mb-3">
+                        <label for="studentName" class="form-label">ФИО студента</label>
+                        <input placeholder="Например: Иванов Иван Иванович" type="text" class="form-control" id="studentName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="studentGroup" class="form-label">Группа</label>
+                        <input placeholder="Например: ПИ-101" type="text" class="form-control" id="studentGroup" name="group" required>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="studentAStudent" name="a_student">
+                        <label class="form-check-label" for="studentAStudent">
+                            Отличник
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Отменить</button>
+                <button type="button" class="btn btn-secondary" id="addStudentBtn">Добавить студента</button>
+            </div>
+        </div>
+    </div>
+</div>
