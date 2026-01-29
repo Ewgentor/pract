@@ -11,10 +11,10 @@
 <body class="bg-light">
     {{> header}}
     
-    <div class="d-flex">
+    <div class="d-flex flex-grow-1">
         {{> sidebar}}
         
-        <main class="flex-grow-1 p-4 p-lg-5">
+        <main class="flex-grow-1 p-4 p-lg-5" style="overflow-y: auto;">
             <div class="container-fluid">
                 {{{body}}}
             </div>
