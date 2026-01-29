@@ -364,6 +364,132 @@ app.get('/portfolio', async (req, res) => {
   });
 });
 
+app.post('/portfolio/:id/achievements', async (req, res) => {
+  const studentId = req.params.id;
+  const {
+    type,
+    academicSubtype,
+    gradeLevel,
+    olympLevel,
+    olympPlace,
+    programsCount,
+    scientificSubtype,
+    scientificLevel,
+    scientificPlace,
+    publicationRank,
+    reportsCount,
+    creativeLevel,
+    creativePlace,
+    sportsSubtype,
+    sportsLevel,
+    sportsPopularCount,
+    socialSubtype,
+    socialCount,
+  } = req.body;
+
+  const student = await Students.findById(studentId);
+  if (!student) {
+    return res.status(404).send('Студент не найден');
+  }
+
+  switch (type) {
+    case 'academic': {
+      if (academicSubtype === 'grade') {
+        // отличник / хорошист
+        student.a_student = gradeLevel === 'excellent';
+      } else if (academicSubtype === 'olympiad' && olympLevel && olympPlace) {
+        // предметные олимпиады
+        student.olimpiads = student.olimpiads || [];
+        student.olimpiads.push({
+          pType: olympLevel,
+          place: Number(olympPlace),
+        });
+      } else if (academicSubtype === 'programs' && programsCount) {
+        const count = Number(programsCount) || 0;
+        student.ed_programms = (student.ed_programms || 0) + count;
+      }
+      break;
+    }
+    case 'scientific': {
+      if (scientificSubtype === 'contest' && scientificLevel && scientificPlace) {
+        student.research_contests = student.research_contests || [];
+        student.research_contests.push({
+          pType: scientificLevel,
+          place: Number(scientificPlace),
+        });
+      } else if (scientificSubtype === 'publication' && publicationRank) {
+        const isVakRisc = publicationRank === 'vak_risc';
+        student.publications = student.publications || [];
+        student.publications.push({
+          rank: isVakRisc,
+        });
+      } else if (scientificSubtype === 'report' && reportsCount) {
+        const count = Number(reportsCount) || 0;
+        student.reports = (student.reports || 0) + count;
+      }
+      break;
+    }
+    case 'creative': {
+      if (creativeLevel && creativePlace) {
+        student.create_contests = student.create_contests || [];
+        student.create_contests.push({
+          pType: creativeLevel,
+          place: Number(creativePlace),
+        });
+      }
+      break;
+    }
+    case 'sports': {
+      if (sportsSubtype === 'title_int') {
+        // Мастер спорта международного класса – храним в первом флаге
+        student.sports_titles = student.sports_titles || [false, false];
+        student.sports_titles[0] = true;
+      } else if (sportsSubtype === 'title_team') {
+        // Член сборной России – используем второй флаг
+        student.sports_titles = student.sports_titles || [false, false];
+        student.sports_titles[1] = true;
+      } else if (sportsSubtype === 'champion' && sportsLevel) {
+        // Победитель чемпионата: только выбор чемпионата, место считаем 1
+        student.sports_championships = student.sports_championships || [];
+        student.sports_championships.push({
+          pType: sportsLevel,
+          place: 1,
+        });
+      } else if (sportsSubtype === 'prize') {
+        // Призёр (2–3 место), в весах используется ветка other
+        student.sports_championships = student.sports_championships || [];
+        student.sports_championships.push({
+          pType: 'other',
+          place: 2,
+        });
+      } else if (sportsSubtype === 'popularization' && sportsPopularCount) {
+        const count = Number(sportsPopularCount) || 0;
+        student.sports_popularization = (student.sports_popularization || 0) + count;
+      }
+      break;
+    }
+    case 'social': {
+      if (socialSubtype === 'starosta') {
+        student.starosta = true;
+      } else if (socialSubtype === 'profsoyuz') {
+        student.profsoyuz = true;
+      } else if (socialSubtype === 'volunteer') {
+        student.volunteer = true;
+      } else if (socialSubtype === 'cultural' && socialCount) {
+        const count = Number(socialCount) || 0;
+        student.cultural_events = (student.cultural_events || 0) + count;
+      }
+      break;
+    }
+    default:
+      break;
+  }
+
+  await student.save();
+
+  res.redirect(`/portfolio?id=${studentId}`);
+});
+
 app.listen(PORT, () => {
   console.log(`Сервер запущен на http://localhost:${PORT}`);
 });

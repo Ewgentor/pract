@@ -226,7 +226,7 @@
       </div>
 
       <div class="modal-body pt-3">
-        <form action="/portfolio/{{student._id}}/achievements" method="post" enctype="multipart/form-data">
+        <form action="/portfolio/{{student._id}}/achievements" method="post">
           <div class="mb-3">
             <label for="achievementType" class="form-label">Тип достижения</label>
             <select class="form-select" id="achievementType" name="type" required>
@@ -424,18 +424,6 @@
             </div>
           </div>
 
-          <div class="mb-3">
-            <label for="achievementTitle" class="form-label">Название</label>
-            <input
-              type="text"
-              class="form-control"
-              id="achievementTitle"
-              name="title"
-              placeholder="Например: Грамота за 1 место"
-              required
-            >
-          </div>
-
           <div class="row g-3 mb-3">
             <div class="col-12 col-md-6">
               <label for="achievementDate" class="form-label">Дата получения</label>
@@ -448,31 +436,6 @@
               >
             </div>
             {{!-- Поле баллов убираем, так как они считаются из весов --}}
-          </div>
-
-          <div class="mb-3">
-            <label for="achievementDescription" class="form-label">Описание</label>
-            <textarea
-              class="form-control"
-              id="achievementDescription"
-              name="description"
-              rows="3"
-              placeholder="Дополнительная информация..."
-            ></textarea>
-          </div>
-
-          <div class="mb-3">
-            <label for="achievementFile" class="form-label">Подтверждающий документ (PDF)</label>
-            <input
-              class="form-control"
-              type="file"
-              id="achievementFile"
-              name="document"
-              accept="application/pdf"
-            >
-            <div class="form-text">
-              Прикрепите скан грамоты, сертификата или другого документа в формате PDF.
-            </div>
           </div>
 
           <div class="d-flex justify-content-end gap-2 mt-4">
