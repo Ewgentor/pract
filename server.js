@@ -2,10 +2,15 @@ const express = require('express');
 const path = require('path');
 const exphbs = require('express-handlebars');
 const mongoose = require('mongoose');
+const multer = require('multer');
+const fs = require('fs');
 const { Students, Weights } = require('./models');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Настройка multer для загрузки файлов
+const upload = multer({ dest: 'uploads/' });
 
 mongoose.connect('mongodb://127.0.0.1:27017/stipendia');
 
@@ -228,11 +233,172 @@ app.get('/students', async (req, res) => {
   });
 });
 
-app.get('/upload', (req, res) => {
+app.get('/upload', async (req, res) => {
+  const totalStudents = await Students.countDocuments({});
   res.render('pages/upload', {
     title: 'Загрузка',
-    activeTab: 'upload'
+    activeTab: 'upload',
+    totalStudents
   });
+});
+
+app.post('/upload/import', upload.single('studentsFile'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).send('Файл не выбран');
+    }
+
+    const fileExt = path.extname(req.file.originalname).toLowerCase();
+    let students = [];
+
+    if (fileExt === '.json') {
+      // Парсинг JSON файла
+      const fileContent = fs.readFileSync(req.file.path, 'utf-8');
+      const data = JSON.parse(fileContent);
+      students = Array.isArray(data) ? data : [data];
+    } else {
+      fs.unlinkSync(req.file.path);
+      return res.status(400).send('Поддерживается только JSON формат');
+    }
+
+    // Валидация и сохранение студентов
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (const studentData of students) {
+      try {
+        // Преобразуем данные в правильные типы
+        const processedData = {
+          name: studentData.name || '',
+          group: studentData.group || '',
+          a_student: studentData.a_student === 'true' || studentData.a_student === true,
+          ed_programms: parseInt(studentData.ed_programms) || 0,
+          reports: parseInt(studentData.reports) || 0,
+          sports_popularization: parseInt(studentData.sports_popularization) || 0,
+          cultural_events: parseInt(studentData.cultural_events) || 0,
+          starosta: studentData.starosta === 'true' || studentData.starosta === true,
+          profsoyuz: studentData.profsoyuz === 'true' || studentData.profsoyuz === true,
+          volunteer: studentData.volunteer === 'true' || studentData.volunteer === true,
+        };
+
+        // Проверяем наличие обязательных полей
+        if (!processedData.name || !processedData.group) {
+          errorCount++;
+          continue;
+        }
+
+        // Парсим массивы если они передаются как JSON строки
+        if (typeof studentData.olimpiads === 'string') {
+          try {
+            processedData.olimpiads = JSON.parse(studentData.olimpiads);
+          } catch (e) {
+            processedData.olimpiads = [];
+          }
+        } else {
+          processedData.olimpiads = studentData.olimpiads || [];
+        }
+
+        if (typeof studentData.research_contests === 'string') {
+          try {
+            processedData.research_contests = JSON.parse(studentData.research_contests);
+          } catch (e) {
+            processedData.research_contests = [];
+          }
+        } else {
+          processedData.research_contests = studentData.research_contests || [];
+        }
+
+        if (typeof studentData.publications === 'string') {
+          try {
+            processedData.publications = JSON.parse(studentData.publications);
+          } catch (e) {
+            processedData.publications = [];
+          }
+        } else {
+          processedData.publications = studentData.publications || [];
+        }
+
+        if (typeof studentData.create_contests === 'string') {
+          try {
+            processedData.create_contests = JSON.parse(studentData.create_contests);
+          } catch (e) {
+            processedData.create_contests = [];
+          }
+        } else {
+          processedData.create_contests = studentData.create_contests || [];
+        }
+
+        if (typeof studentData.sports_championships === 'string') {
+          try {
+            processedData.sports_championships = JSON.parse(studentData.sports_championships);
+          } catch (e) {
+            processedData.sports_championships = [];
+          }
+        } else {
+          processedData.sports_championships = studentData.sports_championships || [];
+        }
+
+        if (typeof studentData.sports_titles === 'string') {
+          try {
+            processedData.sports_titles = JSON.parse(studentData.sports_titles);
+          } catch (e) {
+            processedData.sports_titles = [false, false];
+          }
+        } else if (Array.isArray(studentData.sports_titles)) {
+          processedData.sports_titles = studentData.sports_titles;
+        } else {
+          processedData.sports_titles = [false, false];
+        }
+
+        // Ищем и обновляем студента или создаем нового
+        const existingStudent = await Students.findOne({ name: processedData.name, group: processedData.group });
+        if (existingStudent) {
+          await Students.updateOne({ _id: existingStudent._id }, processedData);
+        } else {
+          await Students.create(processedData);
+        }
+        successCount++;
+      } catch (err) {
+        console.error('Ошибка при обработке студента:', err);
+        errorCount++;
+      }
+    }
+
+    // Удалить загруженный файл
+    fs.unlinkSync(req.file.path);
+
+    res.send(`
+      <html>
+        <body style="font-family: Arial; padding: 20px;">
+          <h2>Импорт завершён</h2>
+          <p>Успешно импортировано: <strong>${successCount}</strong> студентов</p>
+          <p>Ошибок: <strong>${errorCount}</strong></p>
+          <a href="/upload">Вернуться на страницу загрузки</a>
+        </body>
+      </html>
+    `);
+  } catch (err) {
+    console.error('Ошибка при импорте файла', err);
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    res.status(500).send('Ошибка при импорте файла');
+  }
+});
+
+
+app.get('/upload/export-json', async (req, res) => {
+  try {
+    const students = await Students.find().lean();
+    const json = JSON.stringify(students, null, 2);
+    
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="students_${new Date().toISOString().split('T')[0]}.json"`);
+    res.send(Buffer.from(json, 'utf-8'));
+  } catch (err) {
+    console.error('Ошибка при экспорте', err);
+    res.status(500).send('Ошибка при экспорте');
+  }
 });
 
 app.get('/reports', async (req, res) => {
