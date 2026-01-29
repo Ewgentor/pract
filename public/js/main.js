@@ -2,6 +2,18 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Инициализация Bootstrap компонентов и другая логика
     console.log('Приложение загружено');
+
+    // Закрытие мобильного sidebar при клике на ссылку
+    const sidebarLinks = document.querySelectorAll('#sidebarMenu .nav-link');
+    const offcanvasElement = document.getElementById('sidebarMenu');
+    if (offcanvasElement) {
+        const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                offcanvas.hide();
+            });
+        });
+    }
     
     // Фильтрация по группам
     const groupSelect = document.getElementById('group');
