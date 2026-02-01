@@ -12,7 +12,8 @@ const PORT = process.env.PORT || 3000;
 // Настройка multer для загрузки файлов
 const upload = multer({ dest: 'uploads/' });
 
-mongoose.connect('mongodb://127.0.0.1:27017/stipendia');
+const mongoUrl = process.env.MONGODB_URL || 'mongodb://127.0.0.1:27017/stipendia';
+mongoose.connect(mongoUrl);
 
 Weights.findOne().then(doc => {
   if (!doc) {
@@ -911,9 +912,13 @@ app.post('/portfolio/:id/achievements', async (req, res) => {
   res.redirect(`/portfolio?id=${studentId}`);
 });
 
-app.listen(PORT, () => {
-  console.log(`Сервер запущен на http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Сервер запущен на http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
 
 
 function calculateContestScore(contests, contest_type, weights) {
