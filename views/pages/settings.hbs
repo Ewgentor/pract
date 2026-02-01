@@ -1,0 +1,349 @@
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">Настройки весов</h2>
+        <div class="card">
+            <div class="card-body">
+                <form id="weightsForm" method="POST" action="/settings">
+                    
+                    <!-- Статус студента -->
+                    <div class="section-header mb-3">
+                        <h5>Статус студента</h5>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Успеваемость</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label for="aStudentYes" class="form-label">Отличник</label>
+                                        <input type="number" class="form-control" id="aStudentYes" name="a_student_yes" value={{ weights.a_student.[0] }}>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label for="aStudentNo" class="form-label">Хорошист</label>
+                                        <input type="number" class="form-control" id="aStudentNo" name="a_student_no" value={{weights.a_student.[1]}}>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Олимпиады -->
+                    <div class="section-header mb-3">
+                        <h5>Олимпиады</h5>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <h6 class="text-muted">Международные</h6>
+                            <div class="mb-2">
+                                <label for="olimpiadsIntFirst" class="form-label">1 место</label>
+                                <input type="number" class="form-control" id="olimpiadsIntFirst" name="olimpiads_int_first" value={{weights.olimpiads.Int.first}}>
+                            </div>
+                            <div class="mb-2">
+                                <label for="olimpiadsIntSecond" class="form-label">2 место</label>
+                                <input type="number" class="form-control" id="olimpiadsIntSecond" name="olimpiads_int_second" value={{weights.olimpiads.Int.second}}>
+                            </div>
+                            <div class="mb-2">
+                                <label for="olimpiadsIntThird" class="form-label">3 место</label>
+                                <input type="number" class="form-control" id="olimpiadsIntThird" name="olimpiads_int_third" value={{weights.olimpiads.Int.third}}>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-muted">Российские</h6>
+                            <div class="mb-2">
+                                <label for="olimpiadsRusFirst" class="form-label">1 место</label>
+                                <input type="number" class="form-control" id="olimpiadsRusFirst" name="olimpiads_rus_first" value={{weights.olimpiads.Rus.first}}>
+                            </div>
+                            <div class="mb-2">
+                                <label for="olimpiadsRusSecond" class="form-label">2 место</label>
+                                <input type="number" class="form-control" id="olimpiadsRusSecond" name="olimpiads_rus_second" value={{weights.olimpiads.Rus.second}}>
+                            </div>
+                            <div class="mb-2">
+                                <label for="olimpiadsRusThird" class="form-label">3 место</label>
+                                <input type="number" class="form-control" id="olimpiadsRusThird" name="olimpiads_rus_third" value={{weights.olimpiads.Rus.third}}>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-muted">Университетские</h6>
+                            <div class="mb-2">
+                                <label for="olimpiadsUniFirst" class="form-label">1 место</label>
+                                <input type="number" class="form-control" id="olimpiadsUniFirst" name="olimpiads_uni_first" value={{weights.olimpiads.Uni.first}}>
+                            </div>
+                            <div class="mb-2">
+                                <label for="olimpiadsUniSecond" class="form-label">2 место</label>
+                                <input type="number" class="form-control" id="olimpiadsUniSecond" name="olimpiads_uni_second" value={{weights.olimpiads.Uni.second}}>
+                            </div>
+                            <div class="mb-2">
+                                <label for="olimpiadsUniThird" class="form-label">3 место</label>
+                                <input type="number" class="form-control" id="olimpiadsUniThird" name="olimpiads_uni_third" value={{weights.olimpiads.Uni.third}}>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Образовательные программы и конкурсы -->
+                    <div class="section-header mb-3">
+                        <h5>Образовательные программы и конкурсы</h5>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="edProgramms" class="form-label">Образовательные программы</label>
+                            <input type="number" class="form-control" id="edProgramms" name="ed_programms" value={{weights.ed_programms}}>
+                        </div>
+                    </div>
+
+                    <!-- Научные конкурсы -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <h6 class="text-muted">Научные конкурсы - Международные</h6>
+                            <div class="mb-2">
+                                <label for="researchIntFirst" class="form-label">1 место</label>
+                                <input type="number" class="form-control" id="researchIntFirst" name="research_contests_int_first" value={{weights.research_contests.Int.first}}>
+                            </div>
+                            <div class="mb-2">
+                                <label for="researchIntSecond" class="form-label">2 место</label>
+                                <input type="number" class="form-control" id="researchIntSecond" name="research_contests_int_second" value={{weights.research_contests.Int.second}}>
+                            </div>
+                            <div class="mb-2">
+                                <label for="researchIntThird" class="form-label">3 место</label>
+                                <input type="number" class="form-control" id="researchIntThird" name="research_contests_int_third" value={{weights.research_contests.Int.third}}>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-muted">Научные конкурсы - Российские</h6>
+                            <div class="mb-2">
+                                <label for="researchRusFirst" class="form-label">1 место</label>
+                                <input type="number" class="form-control" id="researchRusFirst" name="research_contests_rus_first" value={{weights.research_contests.Rus.first}}>
+                            </div>
+                            <div class="mb-2">
+                                <label for="researchRusSecond" class="form-label">2 место</label>
+                                <input type="number" class="form-control" id="researchRusSecond" name="research_contests_rus_second" value={{weights.research_contests.Rus.second}}>
+                            </div>
+                            <div class="mb-2">
+                                <label for="researchRusThird" class="form-label">3 место</label>
+                                <input type="number" class="form-control" id="researchRusThird" name="research_contests_rus_third" value={{weights.research_contests.Rus.third}}>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-muted">Научные конкурсы - Университетские</h6>
+                            <div class="mb-2">
+                                <label for="researchUniFirst" class="form-label">1 место</label>
+                                <input type="number" class="form-control" id="researchUniFirst" name="research_contests_uni_first" value={{weights.research_contests.Uni.first}}>
+                            </div>
+                            <div class="mb-2">
+                                <label for="researchUniSecond" class="form-label">2 место</label>
+                                <input type="number" class="form-control" id="researchUniSecond" name="research_contests_uni_second" value={{weights.research_contests.Uni.second}}>
+                            </div>
+                            <div class="mb-2">
+                                <label for="researchUniThird" class="form-label">3 место</label>
+                                <input type="number" class="form-control" id="researchUniThird" name="research_contests_uni_third" value={{weights.research_contests.Uni.third}}>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Публикации и доклады -->
+                    <div class="section-header mb-3">
+                        <h5>Публикации и доклады</h5>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Публикации</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label for="publicationsVAK" class="form-label">ВАК/РИНЦ</label>
+                                        <input type="number" class="form-control" id="publicationsVAK" name="publications_vak" value={{weights.publications.[0]}}>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label for="publicationsOther" class="form-label">Прочие</label>
+                                        <input type="number" class="form-control" id="publicationsOther" name="publications_other" value={{weights.publications.[1]}}>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="reports" class="form-label">Доклады на конференциях</label>
+                            <input type="number" class="form-control" id="reports" name="reports" value={{weights.reports}}>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Конкурсы творческих работ -->
+                    <div class="section-header mb-3">
+                        <h5>Конкурсы творческих работ</h5>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <h6 class="text-muted">Международные</h6>
+                            <div class="mb-2">
+                                <label for="createIntFirst" class="form-label">1 место</label>
+                                <input type="number" class="form-control" id="createIntFirst" name="create_contests_int_first" value={{weights.create_contests.Int.first}}>
+                            </div>
+                            <div class="mb-2">
+                                <label for="createIntSecond" class="form-label">2 место</label>
+                                <input type="number" class="form-control" id="createIntSecond" name="create_contests_int_second" value={{weights.create_contests.Int.second}}>
+                            </div>
+                            <div class="mb-2">
+                                <label for="createIntThird" class="form-label">3 место</label>
+                                <input type="number" class="form-control" id="createIntThird" name="create_contests_int_third" value={{weights.create_contests.Int.third}}>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-muted">Российские</h6>
+                            <div class="mb-2">
+                                <label for="createRusFirst" class="form-label">1 место</label>
+                                <input type="number" class="form-control" id="createRusFirst" name="create_contests_rus_first" value={{weights.create_contests.Rus.first}}>
+                            </div>
+                            <div class="mb-2">
+                                <label for="createRusSecond" class="form-label">2 место</label>
+                                <input type="number" class="form-control" id="createRusSecond" name="create_contests_rus_second" value={{weights.create_contests.Rus.second}}>
+                            </div>
+                            <div class="mb-2">
+                                <label for="createRusThird" class="form-label">3 место</label>
+                                <input type="number" class="form-control" id="createRusThird" name="create_contests_rus_third" value={{weights.create_contests.Rus.third}}>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="text-muted">Университетские</h6>
+                            <div class="mb-2">
+                                <label for="createUniFirst" class="form-label">1 место</label>
+                                <input type="number" class="form-control" id="createUniFirst" name="create_contests_uni_first" value={{weights.create_contests.Uni.first}}>
+                            </div>
+                            <div class="mb-2">
+                                <label for="createUniSecond" class="form-label">2 место</label>
+                                <input type="number" class="form-control" id="createUniSecond" name="create_contests_uni_second" value={{weights.create_contests.Uni.second}}>
+                            </div>
+                            <div class="mb-2">
+                                <label for="createUniThird" class="form-label">3 место</label>
+                                <input type="number" class="form-control" id="createUniThird" name="create_contests_uni_third" value={{weights.create_contests.Uni.third}}>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Спортивные достижения -->
+                    <div class="section-header mb-3">
+                        <h5>Спортивные достижения</h5>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Спортивные звания</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label for="sportsMaster" class="form-label">Мастер спорта</label>
+                                        <input type="number" class="form-control" id="sportsMaster" name="sports_titles_master" value={{weights.sports_titles.[0]}}>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <label for="sportsCandidate" class="form-label">В нац. сборной</label>
+                                        <input type="number" class="form-control" id="sportsCandidate" name="sports_titles_candidate" value={{weights.sports_titles.[1]}}>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Спортивные чемпионаты -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <label class="form-label">Чемпионства</label>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="mb-2">
+                                <label for="sportsChampInt" class="form-label">Международные</label>
+                                <input type="number" class="form-control" id="sportsChampInt" name="sports_championships_Int" value={{weights.sports_championships.Int}}>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="mb-2">
+                                <label for="sportsChampRus" class="form-label">Российские</label>
+                                <input type="number" class="form-control" id="sportsChampRus" name="sports_championships_Rus" value={{weights.sports_championships.Rus}}>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="mb-2">
+                                <label for="sportsChampCFO" class="form-label">ЦФО</label>
+                                <input type="number" class="form-control" id="sportsChampCFO" name="sports_championships_CFO" value={{weights.sports_championships.CFO}}>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="mb-2">
+                                <label for="sportsChampRegional" class="form-label">Региональные</label>
+                                <input type="number" class="form-control" id="sportsChampRegional" name="sports_championships_Regional" value={{weights.sports_championships.Regional}}>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="mb-2">
+                                <label for="sportsChampOther" class="form-label">Призёр</label>
+                                <input type="number" class="form-control" id="sportsChampOther" name="sports_championships_other" value={{weights.sports_championships.other}}>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Популяризация спорта -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="sportsPopularization" class="form-label">Популяризация спорта</label>
+                            <input type="number" class="form-control" id="sportsPopularization" name="sports_popularization" value={{weights.sports_popularization}}>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Общественная деятельность -->
+                    <div class="section-header mb-3">
+                        <h5>Общественная деятельность</h5>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <label for="starosta" class="form-label">Старост(а)</label>
+                                <input type="number" class="form-control" id="starosta" name="starosta" value={{weights.starosta}}>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <label for="profsoyuz" class="form-label">Профсоюз</label>
+                                <input type="number" class="form-control" id="profsoyuz" name="profsoyuz" value={{weights.profsoyuz}}>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <label for="volunteer" class="form-label">Волонтёр</label>
+                                <input type="number" class="form-control" id="volunteer" name="volunteer" value={{weights.volunteer}}>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <label for="culturalEvents" class="form-label">Участие в культурных мероприятиях</label>
+                                <input type="number" class="form-control" id="culturalEvents" name="cultural_events" value={{weights.cultural_events}}>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Кнопки управления -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="reset" class="btn btn-secondary">Отменить</button>
+                        <button type="submit" class="btn btn-primary">Сохранить настройки</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

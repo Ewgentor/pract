@@ -1,0 +1,453 @@
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body d-flex pb-0">
+                <div class=" align-content-center me-auto">
+                    <a class=" link-secondary" href="/students"><i class="bi bi-arrow-90deg-down">Назад к списку</i></a>
+                </div>
+                <div class=" card-body py-0 px-4 d-flex justify-content-between">
+                    <div>
+                        <h2 class="">{{student.name}}</h2>
+                        <p class=" text-secondary m-0">{{student.group}}</p>
+                    </div>
+                    <div class=" align-content-center text-light">
+                        <h4 class="m-0 py-2 px-3 bg-primary rounded-4">
+                            {{student.total_score}} баллов(а)
+                        </h4>
+                    </div>
+                </div>
+            </div>
+            <div class="p-2 mt-5 d-flex justify-content-around bg-body-secondary">
+                <button class="btn portfolio-tab border-0 rounded-5" data-tab="academic">
+                    <p class="mb-0">Учебная деятельность</p>
+                </button>
+                <button class="btn portfolio-tab border-0 rounded-5" data-tab="scientific">
+                    <p class="mb-0">Научно деятельность</p>
+                </button>
+                <button class="btn portfolio-tab border-0 rounded-5" data-tab="creative">
+                    <p class="mb-0">Творческая деятельность</p>
+                </button>
+                <button class="btn portfolio-tab border-0 rounded-5" data-tab="sports">
+                    <p class="mb-0">Спортивная деятельность</p>
+                </button>
+                <button class="btn portfolio-tab border-0 rounded-5" data-tab="social">
+                    <p class="mb-0">Общественная деятельность</p>
+                </button>
+            </div>
+            <div class="px-4 pt-3 d-flex justify-content-end">
+                <button
+                    type="button"
+                    class="btn btn-primary rounded-4"
+                    id="add-achievement-btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addAchievementModal"
+                >
+                    Добавить достижение
+                </button>
+            </div>
+            <div class="card-body row">
+                {{!-- Учебная --}}
+                <div class="portfolio-tab-panel col-12" data-panel="academic">
+                    {{#if academicActivities.length}}
+                        <div class="row g-3">
+                            {{#each academicActivities}}
+                                <div class="col-12 col-lg-4">
+                                    <div class="card h-100 rounded-4">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h5 class="card-title mb-0">{{title}}</h5>
+                                                {{#if score}}
+                                                    <span class="badge bg-light text-dark border rounded-pill px-3 py-1">
+                                                        {{score}} б.
+                                                    </span>
+                                                {{/if}}
+                                            </div>
+                                            {{#if subtitle}}
+                                                <p class="text-muted small mb-1">{{subtitle}}</p>
+                                            {{/if}}
+                                            {{#if description}}
+                                                <p class="card-text text-muted mb-0">{{description}}</p>
+                                            {{/if}}
+                                        </div>
+                                    </div>
+                                </div>
+                            {{/each}}
+                        </div>
+                    {{else}}
+                        <p class="text-muted mb-0">Нет учебных достижений.</p>
+                    {{/if}}
+                </div>
+
+                {{!-- Научная --}}
+                <div class="portfolio-tab-panel col-12 d-none" data-panel="scientific">
+                    {{#if scientificActivities.length}}
+                        <div class="row g-3">
+                            {{#each scientificActivities}}
+                                <div class="col-12 col-lg-4">
+                                    <div class="card h-100 rounded-4">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h5 class="card-title mb-0">{{title}}</h5>
+                                                {{#if score}}
+                                                    <span class="badge bg-light text-dark border rounded-pill px-3 py-1">
+                                                        {{score}} б.
+                                                    </span>
+                                                {{/if}}
+                                            </div>
+                                            {{#if subtitle}}
+                                                <p class="text-muted small mb-1">{{subtitle}}</p>
+                                            {{/if}}
+                                            {{#if description}}
+                                                <p class="card-text text-muted mb-0">{{description}}</p>
+                                            {{/if}}
+                                        </div>
+                                    </div>
+                                </div>
+                            {{/each}}
+                        </div>
+                    {{else}}
+                        <p class="text-muted mb-0">Нет научных достижений.</p>
+                    {{/if}}
+                </div>
+
+                {{!-- Творческая --}}
+                <div class="portfolio-tab-panel col-12 d-none" data-panel="creative">
+                    {{#if creativeActivities.length}}
+                        <div class="row g-3">
+                            {{#each creativeActivities}}
+                                <div class="col-12 col-lg-4">
+                                    <div class="card h-100 rounded-4">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h5 class="card-title mb-0">{{title}}</h5>
+                                                {{#if score}}
+                                                    <span class="badge bg-light text-dark border rounded-pill px-3 py-1">
+                                                        {{score}} б.
+                                                    </span>
+                                                {{/if}}
+                                            </div>
+                                            {{#if subtitle}}
+                                                <p class="text-muted small mb-1">{{subtitle}}</p>
+                                            {{/if}}
+                                            {{#if description}}
+                                                <p class="card-text text-muted mb-0">{{description}}</p>
+                                            {{/if}}
+                                        </div>
+                                    </div>
+                                </div>
+                            {{/each}}
+                        </div>
+                    {{else}}
+                        <p class="text-muted mb-0">Нет творческих достижений.</p>
+                    {{/if}}
+                </div>
+
+                {{!-- Спортивная --}}
+                <div class="portfolio-tab-panel col-12 d-none" data-panel="sports">
+                    {{#if sportsActivities.length}}
+                        <div class="row g-3">
+                            {{#each sportsActivities}}
+                                <div class="col-12 col-lg-4">
+                                    <div class="card h-100 rounded-4">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h5 class="card-title mb-0">{{title}}</h5>
+                                                {{#if score}}
+                                                    <span class="badge bg-light text-dark border rounded-pill px-3 py-1">
+                                                        {{score}} б.
+                                                    </span>
+                                                {{/if}}
+                                            </div>
+                                            {{#if subtitle}}
+                                                <p class="text-muted small mb-1">{{subtitle}}</p>
+                                            {{/if}}
+                                            {{#if description}}
+                                                <p class="card-text text-muted mb-0">{{description}}</p>
+                                            {{/if}}
+                                        </div>
+                                    </div>
+                                </div>
+                            {{/each}}
+                        </div>
+                    {{else}}
+                        <p class="text-muted mb-0">Нет спортивных достижений.</p>
+                    {{/if}}
+                </div>
+
+                {{!-- Общественная --}}
+                <div class="portfolio-tab-panel col-12 d-none" data-panel="social">
+                    {{#if socialActivities.length}}
+                        <div class="row g-3">
+                            {{#each socialActivities}}
+                                <div class="col-12 col-lg-4">
+                                    <div class="card h-100 rounded-4">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h5 class="card-title mb-0">{{title}}</h5>
+                                                {{#if score}}
+                                                    <span class="badge bg-light text-dark border rounded-pill px-3 py-1">
+                                                        {{score}} б.
+                                                    </span>
+                                                {{/if}}
+                                            </div>
+                                            {{#if subtitle}}
+                                                <p class="text-muted small mb-1">{{subtitle}}</p>
+                                            {{/if}}
+                                            {{#if description}}
+                                                <p class="card-text text-muted mb-0">{{description}}</p>
+                                            {{/if}}
+                                        </div>
+                                    </div>
+                                </div>
+                            {{/each}}
+                        </div>
+                    {{else}}
+                        <p class="text-muted mb-0">Нет общественных достижений.</p>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{!-- Модальное окно добавления достижения --}}
+<div class="modal fade" id="addAchievementModal" tabindex="-1" aria-labelledby="addAchievementLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-3">
+      <div class="modal-header border-0 pb-0">
+        <div>
+          <h5 class="modal-title" id="addAchievementLabel">Новое достижение</h5>
+          <p class="text-muted small mb-0">
+            Заполните информацию о достижении и прикрепите подтверждающий документ.
+          </p>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body pt-3">
+        <form action="/portfolio/{{student._id}}/achievements" method="post">
+          <div class="mb-3">
+            <label for="achievementType" class="form-label">Тип достижения</label>
+            <select class="form-select" id="achievementType" name="type" required>
+              <option value="academic">Учебная деятельность</option>
+              <option value="scientific">Научная деятельность</option>
+              <option value="creative">Творческая деятельность</option>
+              <option value="sports">Спортивная деятельность</option>
+              <option value="social">Общественная деятельность</option>
+            </select>
+          </div>
+
+          {{!-- Дополнительные поля для учебной деятельности --}}
+          <div id="academic-extra-fields" class="mb-3 d-none">
+            <label for="academicSubtype" class="form-label">Вид учебного достижения</label>
+            <select class="form-select mb-3" id="academicSubtype" name="academicSubtype">
+              <option value="grade">Успеваемость</option>
+              <option value="olympiad">Предметные учебные олимпиады, конкурсы</option>
+              <option value="programs">Образовательные программы</option>
+            </select>
+
+            <div id="academic-grade-fields" class="mb-3">
+              <label for="gradeLevel" class="form-label">Успеваемость</label>
+              <select class="form-select" id="gradeLevel" name="gradeLevel">
+                <option value="excellent">Отличник</option>
+                <option value="good">Хорошист</option>
+              </select>
+            </div>
+
+            <div id="academic-olympiad-fields" class="row g-3 mb-3 d-none">
+              <div class="col-12 col-md-6">
+                <label for="olympLevel" class="form-label">Уровень</label>
+                <select class="form-select" id="olympLevel" name="olympLevel">
+                  <option value="Int">Международные</option>
+                  <option value="Rus">Российские / областные</option>
+                  <option value="Uni">Вузовские</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6">
+                <label for="olympPlace" class="form-label">Место</label>
+                <select class="form-select" id="olympPlace" name="olympPlace">
+                  <option value="1">1 место</option>
+                  <option value="2">2 место</option>
+                  <option value="3">3 место</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="academic-programs-fields" class="mb-3 d-none">
+              <label for="programsCount" class="form-label">Количество образовательных программ</label>
+              <input
+                type="number"
+                min="1"
+                class="form-control"
+                id="programsCount"
+                name="programsCount"
+                placeholder="Например: 3"
+              >
+            </div>
+          </div>
+
+          {{!-- Дополнительные поля для научной деятельности --}}
+          <div id="scientific-extra-fields" class="mb-3 d-none">
+            <label for="scientificSubtype" class="form-label">Вид научного достижения</label>
+            <select class="form-select mb-3" id="scientificSubtype" name="scientificSubtype">
+              <option value="contest">Научные конкурсы</option>
+              <option value="publication">Публикации в научных журналах</option>
+              <option value="report">Доклады на научных конференциях</option>
+            </select>
+
+            <div id="scientific-contest-fields" class="row g-3 mb-3">
+              <div class="col-12 col-md-6">
+                <label for="scientificLevel" class="form-label">Уровень</label>
+                <select class="form-select" id="scientificLevel" name="scientificLevel">
+                  <option value="Int">Международные</option>
+                  <option value="Rus">Российские / областные</option>
+                  <option value="Uni">Вузовские</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6">
+                <label for="scientificPlace" class="form-label">Место</label>
+                <select class="form-select" id="scientificPlace" name="scientificPlace">
+                  <option value="1">1 место</option>
+                  <option value="2">2 место</option>
+                  <option value="3">3 место</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="scientific-publication-fields" class="mb-3 d-none">
+              <label for="publicationRank" class="form-label">Тип публикации</label>
+              <select class="form-select" id="publicationRank" name="publicationRank">
+                <option value="vak_risc">ВАК / РИНЦ</option>
+                <option value="other">Прочие издания</option>
+              </select>
+            </div>
+
+            <div id="scientific-report-fields" class="mb-3 d-none">
+              <label for="reportsCount" class="form-label">Количество докладов</label>
+              <input
+                type="number"
+                min="1"
+                class="form-control"
+                id="reportsCount"
+                name="reportsCount"
+                placeholder="Например: 2"
+              >
+            </div>
+          </div>
+
+          {{!-- Дополнительные поля для творческой деятельности --}}
+          <div id="creative-extra-fields" class="mb-3 d-none">
+            <p class="text-muted small mb-2">Творческие конкурсы по уровням и местам.</p>
+            <div class="row g-3">
+              <div class="col-12 col-md-6">
+                <label for="creativeLevel" class="form-label">Уровень</label>
+                <select class="form-select" id="creativeLevel" name="creativeLevel">
+                  <option value="Int">Международные</option>
+                  <option value="Rus">Российские / областные</option>
+                  <option value="Uni">Вузовские</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6">
+                <label for="creativePlace" class="form-label">Место</label>
+                <select class="form-select" id="creativePlace" name="creativePlace">
+                  <option value="1">1 место</option>
+                  <option value="2">2 место</option>
+                  <option value="3">3 место</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {{!-- Дополнительные поля для спортивной деятельности --}}
+          <div id="sports-extra-fields" class="mb-3 d-none">
+            <label for="sportsSubtype" class="form-label">Вид спортивного достижения</label>
+            <select class="form-select mb-3" id="sportsSubtype" name="sportsSubtype">
+              <option value="title_int">Мастер спорта международного класса</option>
+              <option value="title_team">Член Сборной России</option>
+              <option value="champion">Победитель соревнований (чемпионаты)</option>
+              <option value="prize">Призёр соревнований (2–3 место)</option>
+              <option value="popularization">Популяризация спорта</option>
+            </select>
+
+            <div id="sports-title-fields" class="mb-3">
+              <p class="text-muted small mb-0">
+                Звание добавится к спортивным достижениям студента, баллы будут рассчитаны по весам.
+              </p>
+            </div>
+
+            <div id="sports-competition-fields" class="row g-3 mb-3 d-none">
+              <div class="col-12">
+                <label for="sportsLevel" class="form-label">Чемпионат</label>
+                <select class="form-select" id="sportsLevel" name="sportsLevel">
+                  <option value="Int">Чемпионат мира</option>
+                  <option value="Rus">Чемпионат России</option>
+                  <option value="CFO">Чемпионат ЦФО</option>
+                  <option value="Regional">Чемпионат области</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="sports-popular-fields" class="mb-3 d-none">
+              <label for="sportsPopularCount" class="form-label">Количество активностей по популяризации спорта</label>
+              <input
+                type="number"
+                min="1"
+                class="form-control"
+                id="sportsPopularCount"
+                name="sportsPopularCount"
+                placeholder="Например: 3"
+              >
+            </div>
+          </div>
+
+          {{!-- Дополнительные поля для общественной деятельности --}}
+          <div id="social-extra-fields" class="mb-3 d-none">
+            <label for="socialSubtype" class="form-label">Вид общественной деятельности</label>
+            <select class="form-select mb-3" id="socialSubtype" name="socialSubtype">
+              <option value="starosta">Староста</option>
+              <option value="profsoyuz">Профсоюзная работа, студенческий совет</option>
+              <option value="volunteer">Волонтёрская деятельность</option>
+              <option value="cultural">Профориентационная работа, работа в летних лагерях</option>
+            </select>
+
+            <div id="social-count-fields" class="mb-3 d-none">
+              <label for="socialCount" class="form-label">Количество мероприятий</label>
+              <input
+                type="number"
+                min="1"
+                class="form-control"
+                id="socialCount"
+                name="socialCount"
+                placeholder="Например: 3"
+              >
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-12 col-md-6">
+              <label for="achievementDate" class="form-label">Дата получения</label>
+              <input
+                type="date"
+                class="form-control"
+                id="achievementDate"
+                name="date"
+                required
+              >
+            </div>
+            {{!-- Поле баллов убираем, так как они считаются из весов --}}
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-4">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+              Отмена
+            </button>
+            <button type="submit" class="btn btn-dark">
+              Добавить
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

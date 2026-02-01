@@ -1,0 +1,80 @@
+<div class="row mb-4">
+  <div class="col-12 col-lg-10 col-xxl-9">
+    <div class="card border-0 shadow-sm bg-light">
+      <div class="card-body p-4">
+        <h2 class="h4 mb-2">Загрузка и синхронизация данных</h2>
+        <p class="text-muted mb-0">
+          Импортируйте данные студентов из файлов или экспортируйте текущую базу для резервного копирования.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-12 col-lg-6">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body p-4">
+        <h3 class="h5 mb-1">Импорт данных</h3>
+        <p class="text-muted mb-4">
+          Загрузите файл JSON с данными студентов.
+        </p>
+
+        <form action="/upload/import" method="post" enctype="multipart/form-data" class="mb-3">
+          <div class="mb-3">
+            <label for="studentsFile" class="form-label mb-1">Выберите файл</label>
+            <input
+              class="form-control"
+              type="file"
+              id="studentsFile"
+              name="studentsFile"
+              accept=".json"
+              required
+            >
+            <div class="form-text">
+              Поддерживаемый формат: JSON
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-outline-primary w-100 d-flex justify-content-center align-items-center">
+            <i class="bi bi-cloud-arrow-up me-2"></i>
+            Импортировать данные
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-6">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body p-4">
+        <h3 class="h5 mb-1">Экспорт данных</h3>
+        <p class="text-muted mb-4">
+          Сохраните текущие данные студентов для резервного копирования или переноса.
+        </p>
+
+        <p class="text-muted mb-3">
+          Всего студентов в базе:
+          <span class="fw-semibold">{{totalStudents}}</span>
+        </p>
+
+        <form action="/upload/export-json" method="get" class="mb-3">
+          <button type="submit" class="btn btn-dark w-100 d-flex justify-content-center align-items-center">
+            <i class="bi bi-cloud-arrow-down me-2"></i>
+            Экспортировать в JSON
+          </button>
+        </form>
+
+        <div class="border rounded-3 p-3 bg-white">
+          <div class="d-flex">
+            <i class="bi bi-info-circle text-secondary me-2 mt-1"></i>
+            <p class="text-muted mb-0 small">
+              JSON файл можно использовать для резервного копирования данных, переноса между системами или начального заполнения базы
+              на другом сервере.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
