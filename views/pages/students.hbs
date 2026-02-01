@@ -62,9 +62,12 @@
                                     <td>{{this.social_score}}</td>
                                     <td>{{this.total_score}}</td>
                                     <td>
-                                        <a href="/portfolio?id={{this.id}}" class="btn btn-outline-secondary border-0 py-0">
+                                        <a href="/portfolio?id={{this.id}}" class="btn btn-outline-secondary border-0 py-0" title="Просмотреть портфолио студента">
                                             <i class="bi bi-eye"></i>
                                         </a>
+                                        <button class="btn btn-outline-secondary border-0 delete-student py-0" data-id="{{this.id}}" title="Удалить студента">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             {{/each}}
