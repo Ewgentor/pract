@@ -269,6 +269,20 @@ app.post('/students/add', async (req, res) => {
   }
 });
 
+app.delete('/students/:id', async (req, res) => {
+  try {
+    const studentId = req.params.id;
+    const student = await Students.findByIdAndDelete(studentId);
+    if (!student) {
+      return res.status(404).json({ error: 'Студент не найден' });
+    }
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Ошибка при удалении студента', err);
+    res.status(500).json({ error: 'Ошибка при удалении студента' });
+  }
+});
+
 app.get('/upload', async (req, res) => {
   const totalStudents = await Students.countDocuments({});
   res.render('pages/upload', {
@@ -651,16 +665,18 @@ app.get('/portfolio', async (req, res) => {
 
   // Учебная деятельность
   academicActivities.push({
-  title: student.a_student ? 'Отличник' : 'Хорошист',
-  description: student.a_student
-    ? 'Высокая учебная успеваемость'
-    : 'Хорошая учебная успеваемость',
-  score: student.a_student
-    ? (weights.a_student[0] || 0)
-    : (weights.a_student[1] || 0),
+    id: 'academic-grade',
+    title: student.a_student ? 'Отличник' : 'Хорошист',
+    description: student.a_student
+      ? 'Высокая учебная успеваемость'
+      : 'Хорошая учебная успеваемость',
+    score: student.a_student
+      ? (weights.a_student[0] || 0)
+      : (weights.a_student[1] || 0),
   });
-  (student.olimpiads || []).forEach(o => {
+  (student.olimpiads || []).forEach((o, index) => {
     academicActivities.push({
+      id: `academic-olympiad-${index}`,
       title: 'Предметные учебные олимпиады, конкурсы',
       subtitle: getLevelLabel(o.pType),
       description: `Место: ${o.place}`,
@@ -669,6 +685,7 @@ app.get('/portfolio', async (req, res) => {
   });
   if (student.ed_programms > 0) {
     academicActivities.push({
+      id: 'academic-programs',
       title: 'Образовательные программы',
       description: `Участий: ${student.ed_programms}`,
       score: (student.ed_programms || 0) * (weights.ed_programms || 0),
@@ -676,8 +693,9 @@ app.get('/portfolio', async (req, res) => {
   }
 
   // Научная деятельность
-  (student.research_contests || []).forEach(c => {
+  (student.research_contests || []).forEach((c, index) => {
     scientificActivities.push({
+      id: `scientific-contest-${index}`,
       title: 'Научный конкурс',
       subtitle: getLevelLabel(c.pType),
       description: `Место: ${c.place}`,
@@ -686,6 +704,7 @@ app.get('/portfolio', async (req, res) => {
   });
   (student.publications || []).forEach((p, idx) => {
     scientificActivities.push({
+      id: `scientific-publication-${idx}`,
       title: 'Публикация',
       description: p.rank ? 'ВАК / РИНЦ' : 'Прочее издание',
       extra: `№${idx + 1}`,
@@ -696,6 +715,7 @@ app.get('/portfolio', async (req, res) => {
   });
   if (student.reports > 0) {
     scientificActivities.push({
+      id: 'scientific-reports',
       title: 'Доклады / выступления',
       description: `Количество: ${student.reports}`,
       score: (student.reports || 0) * (weights.reports || 0),
@@ -703,8 +723,9 @@ app.get('/portfolio', async (req, res) => {
   }
 
   // Творческая деятельность
-  (student.create_contests || []).forEach(c => {
+  (student.create_contests || []).forEach((c, index) => {
     creativeActivities.push({
+      id: `creative-contest-${index}`,
       title: 'Творческий конкурс',
       subtitle: getLevelLabel(c.pType),
       description: `Место: ${c.place}`,
@@ -715,17 +736,19 @@ app.get('/portfolio', async (req, res) => {
   // Спортивная деятельность
   if (student.sports_titles && student.sports_titles[0]) {
     sportsActivities.push({
+      id: 'sports-master',
       title: 'Мастер спорта',
       score: (weights.sports_titles && weights.sports_titles[0]) || 0,
     });
   }
   if (student.sports_titles && student.sports_titles[1]) {
     sportsActivities.push({
+      id: 'sports-candidate',
       title: 'Кандидат в мастера спорта',
       score: (weights.sports_titles && weights.sports_titles[1]) || 0,
     });
   }
-  (student.sports_championships || []).forEach(c => {
+  (student.sports_championships || []).forEach((c, index) => {
     let score = 0;
     if (weights.sports_championships && weights.sports_championships[c.pType]) {
       score = c.place === 1
@@ -733,6 +756,7 @@ app.get('/portfolio', async (req, res) => {
         : weights.sports_championships.other || 0;
     }
     sportsActivities.push({
+      id: `sports-championship-${index}`,
       title: 'Соревнования',
       subtitle: getLevelLabel(c.pType),
       description: `Место: ${c.place}`,
@@ -741,6 +765,7 @@ app.get('/portfolio', async (req, res) => {
   });
   if (student.sports_popularization > 0) {
     sportsActivities.push({
+      id: 'sports-popularization',
       title: 'Популяризация спорта',
       description: `Активностей: ${student.sports_popularization}`,
       score: (student.sports_popularization || 0) * (weights.sports_popularization || 0),
@@ -750,24 +775,28 @@ app.get('/portfolio', async (req, res) => {
   // Общественная деятельность
   if (student.starosta) {
     socialActivities.push({
+      id: 'social-starosta',
       title: 'Староста группы',
       score: weights.starosta || 0,
     });
   }
   if (student.profsoyuz) {
     socialActivities.push({
+      id: 'social-profsoyuz',
       title: 'Актив профсоюза',
       score: weights.profsoyuz || 0,
     });
   }
   if (student.volunteer) {
     socialActivities.push({
+      id: 'social-volunteer',
       title: 'Волонтёрская деятельность',
       score: weights.volunteer || 0,
     });
   }
   if (student.cultural_events > 0) {
     socialActivities.push({
+      id: 'social-cultural',
       title: 'Профориентационная работа, работа в летних лагерях',
       description: `Участий: ${student.cultural_events}`,
       score: (student.cultural_events || 0) * (weights.cultural_events || 0),
@@ -910,6 +939,83 @@ app.post('/portfolio/:id/achievements', async (req, res) => {
   await student.save();
 
   res.redirect(`/portfolio?id=${studentId}`);
+});
+
+app.delete('/portfolio/:id/achievements/:achievementId', async (req, res) => {
+  const studentId = req.params.id;
+  const achievementId = req.params.achievementId;
+
+  const student = await Students.findById(studentId);
+  if (!student) {
+    return res.status(404).send('Студент не найден');
+  }
+
+  const parts = achievementId.split('-');
+  const type = parts[0];
+  const subtype = parts[1];
+  const index = parts[2] ? parseInt(parts[2]) : null;
+
+  switch (type) {
+    case 'academic':
+      if (subtype === 'olympiad' && index !== null) {
+        if (student.olimpiads && student.olimpiads[index]) {
+          student.olimpiads.splice(index, 1);
+        }
+      } else if (subtype === 'programs') {
+        student.ed_programms = 0;
+      }
+      break;
+    case 'scientific':
+      if (subtype === 'contest' && index !== null) {
+        if (student.research_contests && student.research_contests[index]) {
+          student.research_contests.splice(index, 1);
+        }
+      } else if (subtype === 'publication' && index !== null) {
+        if (student.publications && student.publications[index]) {
+          student.publications.splice(index, 1);
+        }
+      } else if (subtype === 'reports') {
+        student.reports = 0;
+      }
+      break;
+    case 'creative':
+      if (subtype === 'contest' && index !== null) {
+        if (student.create_contests && student.create_contests[index]) {
+          student.create_contests.splice(index, 1);
+        }
+      }
+      break;
+    case 'sports':
+      if (subtype === 'master') {
+        if (student.sports_titles) student.sports_titles[0] = false;
+      } else if (subtype === 'candidate') {
+        if (student.sports_titles) student.sports_titles[1] = false;
+      } else if (subtype === 'championship' && index !== null) {
+        if (student.sports_championships && student.sports_championships[index]) {
+          student.sports_championships.splice(index, 1);
+        }
+      } else if (subtype === 'popularization') {
+        student.sports_popularization = 0;
+      }
+      break;
+    case 'social':
+      if (subtype === 'starosta') {
+        student.starosta = false;
+      } else if (subtype === 'profsoyuz') {
+        student.profsoyuz = false;
+      } else if (subtype === 'volunteer') {
+        student.volunteer = false;
+      } else if (subtype === 'cultural') {
+        student.cultural_events = 0;
+      }
+      break;
+    default:
+      break;
+  }
+
+  await student.save();
+
+  res.json({ success: true });
 });
 
 if (require.main === module) {

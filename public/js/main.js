@@ -263,3 +263,54 @@ document.addEventListener('DOMContentLoaded', function() {
         sportsSubtype.addEventListener('change', updateSportsSubtype);
     }
 });
+
+// Обработчик удаления достижений
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('delete-achievement')) {
+        const achievementId = e.target.dataset.id;
+        const studentId = window.studentId; // Предполагаем, что studentId передан в window
+
+        if (confirm('Вы уверены, что хотите удалить это достижение?')) {
+            fetch(`/portfolio/${studentId}/achievements/${achievementId}`, {
+                method: 'DELETE',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Перезагрузить страницу или обновить UI
+                    window.location.reload();
+                } else {
+                    alert('Ошибка при удалении');
+                }
+            })
+            .catch(err => {
+                console.error('Ошибка:', err);
+                alert('Ошибка при удалении');
+            });
+        }
+    }
+});
+
+// Обработчик удаления студентов
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('delete-student') || e.target.closest('.delete-student')) {
+        const studentId = e.target.closest('.delete-student').dataset.id;
+        if (confirm('Вы уверены, что хотите удалить этого студента?')) {
+            fetch(`/students/${studentId}`, {
+                method: 'DELETE',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Ошибка при удалении студента');
+                }
+            })
+            .catch(err => {
+                console.error('Ошибка:', err);
+                alert('Ошибка при удалении студента');
+            });
+        }
+    }
+});

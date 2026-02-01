@@ -23,7 +23,7 @@
                     <p class="mb-0">Учебная деятельность</p>
                 </button>
                 <button class="btn portfolio-tab border-0 rounded-5" data-tab="scientific">
-                    <p class="mb-0">Научно деятельность</p>
+                    <p class="mb-0">Научная деятельность</p>
                 </button>
                 <button class="btn portfolio-tab border-0 rounded-5" data-tab="creative">
                     <p class="mb-0">Творческая деятельность</p>
@@ -54,7 +54,7 @@
                             {{#each academicActivities}}
                                 <div class="col-12 col-lg-4">
                                     <div class="card h-100 rounded-4">
-                                        <div class="card-body">
+                                        <div class="card-body d-flex flex-column">
                                             <div class="d-flex justify-content-between align-items-center mb-2">
                                                 <h5 class="card-title mb-0">{{title}}</h5>
                                                 {{#if score}}
@@ -69,6 +69,15 @@
                                             {{#if description}}
                                                 <p class="card-text text-muted mb-0">{{description}}</p>
                                             {{/if}}
+                                            <div class="mt-auto text-end">
+                                                {{#unless (eq title "Отличник")}}
+                                                    {{#unless (eq title "Хорошист")}}
+                                                        <button class="btn btn-secondary btn-sm delete-achievement" data-id="{{id}}" title="Удалить">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    {{/unless}}
+                                                {{/unless}}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -86,7 +95,7 @@
                             {{#each scientificActivities}}
                                 <div class="col-12 col-lg-4">
                                     <div class="card h-100 rounded-4">
-                                        <div class="card-body">
+                                        <div class="card-body d-flex flex-column">
                                             <div class="d-flex justify-content-between align-items-center mb-2">
                                                 <h5 class="card-title mb-0">{{title}}</h5>
                                                 {{#if score}}
@@ -101,6 +110,11 @@
                                             {{#if description}}
                                                 <p class="card-text text-muted mb-0">{{description}}</p>
                                             {{/if}}
+                                            <div class="mt-auto text-end">
+                                                <button class="btn btn-secondary btn-sm delete-achievement" data-id="{{id}}" title="Удалить">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -118,7 +132,7 @@
                             {{#each creativeActivities}}
                                 <div class="col-12 col-lg-4">
                                     <div class="card h-100 rounded-4">
-                                        <div class="card-body">
+                                        <div class="card-body d-flex flex-column">
                                             <div class="d-flex justify-content-between align-items-center mb-2">
                                                 <h5 class="card-title mb-0">{{title}}</h5>
                                                 {{#if score}}
@@ -133,6 +147,11 @@
                                             {{#if description}}
                                                 <p class="card-text text-muted mb-0">{{description}}</p>
                                             {{/if}}
+                                            <div class="mt-auto text-end">
+                                                <button class="btn btn-secondary btn-sm delete-achievement" data-id="{{id}}" title="Удалить">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -150,7 +169,7 @@
                             {{#each sportsActivities}}
                                 <div class="col-12 col-lg-4">
                                     <div class="card h-100 rounded-4">
-                                        <div class="card-body">
+                                        <div class="card-body d-flex flex-column">
                                             <div class="d-flex justify-content-between align-items-center mb-2">
                                                 <h5 class="card-title mb-0">{{title}}</h5>
                                                 {{#if score}}
@@ -165,6 +184,11 @@
                                             {{#if description}}
                                                 <p class="card-text text-muted mb-0">{{description}}</p>
                                             {{/if}}
+                                            <div class="mt-auto text-end">
+                                                <button class="btn btn-secondary btn-sm delete-achievement" data-id="{{id}}" title="Удалить">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -182,7 +206,7 @@
                             {{#each socialActivities}}
                                 <div class="col-12 col-lg-4">
                                     <div class="card h-100 rounded-4">
-                                        <div class="card-body">
+                                        <div class="card-body d-flex flex-column">
                                             <div class="d-flex justify-content-between align-items-center mb-2">
                                                 <h5 class="card-title mb-0">{{title}}</h5>
                                                 {{#if score}}
@@ -197,6 +221,11 @@
                                             {{#if description}}
                                                 <p class="card-text text-muted mb-0">{{description}}</p>
                                             {{/if}}
+                                            <div class="mt-auto text-end">
+                                                <button class="btn btn-secondary btn-sm delete-achievement" data-id="{{id}}" title="Удалить">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -451,3 +480,7 @@
     </div>
   </div>
 </div>
+
+<script>
+window.studentId = '{{student._id}}';
+</script>
