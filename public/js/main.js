@@ -266,8 +266,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Обработчик удаления достижений
 document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('delete-achievement')) {
-        const achievementId = e.target.dataset.id;
+    const button = e.target.closest('.delete-achievement');
+    if (button) {
+        const achievementId = button.dataset.id;
         const studentId = window.studentId; // Предполагаем, что studentId передан в window
 
         if (confirm('Вы уверены, что хотите удалить это достижение?')) {
