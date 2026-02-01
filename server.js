@@ -912,9 +912,13 @@ app.post('/portfolio/:id/achievements', async (req, res) => {
   res.redirect(`/portfolio?id=${studentId}`);
 });
 
-app.listen(PORT, () => {
-  console.log(`Сервер запущен на http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Сервер запущен на http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
 
 
 function calculateContestScore(contests, contest_type, weights) {
