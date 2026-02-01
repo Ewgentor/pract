@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://127.0.0.1:27017/stipendia');
-const { Students } = require('./models');
+const { Students } = require('../models');
 
 groups = ["PI-301", "PI-302", "PI-303", "IVT-101", "IVT-102", "IST-301", "IST-302"];
 names = {male: ["Иван", "Пётр", "Василий", "Илья", "Евгений", "Алексей", "Александр", "Даниил", "Эдуард"], female: ["Ивана", "Попова", "Евгения", "Александра", "Дарья", "Элеонора", "Виктория", "Анна", "Мария"]};
@@ -19,7 +19,7 @@ function studentGenerator(number) {
             olimpiads: (() => {
                 arr = [];
                 for (let j = 0; j < Math.floor(Math.random() * 3); j++) {
-                    arr.push({pType: types_contests[Math.floor(Math.random() * types_contests.length)], place: Math.floor(Math.random() * 3) + 1});
+                    arr.push({pType: types_contests[Math.floor(Math.random() * types_contests.length)], place: Math.floor(Math.random() * 3) + 1, date: new Date(2020 + Math.floor(Math.random() * 4), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1)});
                 }
                 console.log(arr);
                 return arr;
@@ -28,14 +28,14 @@ function studentGenerator(number) {
             research_contests: (() => {
                 arr = [];
                 for (let j = 0; j < Math.floor(Math.random() * 3); j++) {
-                    arr.push({pType: types_contests[Math.floor(Math.random() * types_contests.length)], place: Math.floor(Math.random() * 3) + 1});
+                    arr.push({pType: types_contests[Math.floor(Math.random() * types_contests.length)], place: Math.floor(Math.random() * 3) + 1, date: new Date(2020 + Math.floor(Math.random() * 4), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1)});
                 }
                 return arr;
             })(),
             publications: (() => {
                 arr = [];
                 for (let j = 0; j < Math.floor(Math.random() * 5); j++) {
-                    arr.push({rank: Math.random() > 0.5});
+                    arr.push({rank: Math.random() > 0.5, date: new Date(2020 + Math.floor(Math.random() * 4), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1)});
                 }
                 return arr;
             })(),
@@ -43,7 +43,7 @@ function studentGenerator(number) {
             create_contests: (() => {
                 arr = [];
                 for (let j = 0; j < Math.floor(Math.random() * 3); j++) {
-                    arr.push({pType: types_contests[Math.floor(Math.random() * types_contests.length)], place: Math.floor(Math.random() * 3) + 1});
+                    arr.push({pType: types_contests[Math.floor(Math.random() * types_contests.length)], place: Math.floor(Math.random() * 3) + 1, date: new Date(2020 + Math.floor(Math.random() * 4), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1)});
                 }
                 return arr;
             })(),
@@ -51,7 +51,7 @@ function studentGenerator(number) {
             sports_championships: (() => {
                 arr = [];
                 for (let j = 0; j < Math.floor(Math.random() * 3); j++) {
-                    arr.push({pType: types_sports[Math.floor(Math.random() * types_sports.length)], place: Math.floor(Math.random() * 3) + 1});
+                    arr.push({pType: types_sports[Math.floor(Math.random() * types_sports.length)], place: Math.floor(Math.random() * 3) + 1, date: new Date(2020 + Math.floor(Math.random() * 4), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1)});
                 }
                 return arr;
             })(),

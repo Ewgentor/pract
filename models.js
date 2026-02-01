@@ -5,22 +5,22 @@ export const Students = mongoose.model('Students', new mongoose.Schema({
   name: String,
   a_student: Boolean,
   olimpiads: [
-    {pType: String, place: Number}
+    {pType: String, place: Number, date: Date}
   ],
   ed_programms: Number,
   research_contests: [
-    {pType: String, place: Number}
+    {pType: String, place: Number, date: Date}
   ],
   publications: [
-    {rank: Boolean}
+    {rank: Boolean, date: Date}
   ],
   reports: Number,
   create_contests: [
-    {pType: String, place: Number}
+    {pType: String, place: Number, date: Date}
   ],
   sports_titles: [ Boolean ], // [Мастер спорта, Кандидат в мастера спорта]
   sports_championships: [
-    {pType:String, place: Number}
+    {pType:String, place: Number, date: Date}
   ],
   sports_popularization: Number,
   starosta: Boolean,
