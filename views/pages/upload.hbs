@@ -17,7 +17,7 @@
       <div class="card-body p-4">
         <h3 class="h5 mb-1">Импорт данных</h3>
         <p class="text-muted mb-4">
-          Загрузите файл JSON или CSV с данными студентов.
+          Загрузите файл JSON с данными студентов.
         </p>
 
         <form action="/upload/import" method="post" enctype="multipart/form-data" class="mb-3">
@@ -28,11 +28,11 @@
               type="file"
               id="studentsFile"
               name="studentsFile"
-              accept=".json,.csv"
+              accept=".json"
               required
             >
             <div class="form-text">
-              Поддерживаемые форматы: JSON, CSV
+              Поддерживаемый формат: JSON
             </div>
           </div>
 
@@ -41,11 +41,6 @@
             Импортировать данные
           </button>
         </form>
-
-        <a href="/upload/template.csv" class="btn btn-light w-100 d-flex justify-content-center align-items-center">
-          <i class="bi bi-download me-2"></i>
-          Скачать шаблон CSV
-        </a>
       </div>
     </div>
   </div>
