@@ -679,7 +679,7 @@ app.get('/portfolio', async (req, res) => {
       id: `academic-olympiad-${index}`,
       title: 'Предметные учебные олимпиады, конкурсы',
       subtitle: getLevelLabel(o.pType),
-      description: `Место: ${o.place}`,
+      description: `Место: ${o.place}${o.date ? '<br>Дата: ' + new Date(o.date).toLocaleDateString('ru-RU') : ''}`,
       score: getContestScore('olimpiads', o.pType, o.place),
     });
   });
@@ -698,7 +698,7 @@ app.get('/portfolio', async (req, res) => {
       id: `scientific-contest-${index}`,
       title: 'Научный конкурс',
       subtitle: getLevelLabel(c.pType),
-      description: `Место: ${c.place}`,
+      description: `Место: ${c.place}${c.date ? '<br>Дата: ' + new Date(c.date).toLocaleDateString('ru-RU') : ''}`,
       score: getContestScore('research_contests', c.pType, c.place),
     });
   });
@@ -706,7 +706,7 @@ app.get('/portfolio', async (req, res) => {
     scientificActivities.push({
       id: `scientific-publication-${idx}`,
       title: 'Публикация',
-      description: p.rank ? 'ВАК / РИНЦ' : 'Прочее издание',
+      description: `${p.rank ? 'ВАК / РИНЦ' : 'Прочее издание'}${p.date ? '<br>Дата: ' + new Date(p.date).toLocaleDateString('ru-RU') : ''}`,
       extra: `№${idx + 1}`,
       score: p.rank
         ? (weights.publications && weights.publications[0]) || 0
@@ -728,7 +728,7 @@ app.get('/portfolio', async (req, res) => {
       id: `creative-contest-${index}`,
       title: 'Творческий конкурс',
       subtitle: getLevelLabel(c.pType),
-      description: `Место: ${c.place}`,
+      description: `Место: ${c.place}${c.date ? '<br>Дата: ' + new Date(c.date).toLocaleDateString('ru-RU') : ''}`,
       score: getContestScore('create_contests', c.pType, c.place),
     });
   });
@@ -759,7 +759,7 @@ app.get('/portfolio', async (req, res) => {
       id: `sports-championship-${index}`,
       title: 'Соревнования',
       subtitle: getLevelLabel(c.pType),
-      description: `Место: ${c.place}`,
+      description: `Место: ${c.place}${c.date ? '<br>Дата: ' + new Date(c.date).toLocaleDateString('ru-RU') : ''}`,
       score,
     });
   });
@@ -823,16 +823,21 @@ app.post('/portfolio/:id/achievements', async (req, res) => {
     gradeLevel,
     olympLevel,
     olympPlace,
+    olympDate,
     programsCount,
     scientificSubtype,
     scientificLevel,
     scientificPlace,
+    scientificDate,
     publicationRank,
+    publicationDate,
     reportsCount,
     creativeLevel,
     creativePlace,
+    creativeDate,
     sportsSubtype,
     sportsLevel,
+    sportsDate,
     sportsPopularCount,
     socialSubtype,
     socialCount,
@@ -854,6 +859,7 @@ app.post('/portfolio/:id/achievements', async (req, res) => {
         student.olimpiads.push({
           pType: olympLevel,
           place: Number(olympPlace),
+          date: olympDate ? new Date(olympDate) : null,
         });
       } else if (academicSubtype === 'programs' && programsCount) {
         const count = Number(programsCount) || 0;
@@ -867,12 +873,14 @@ app.post('/portfolio/:id/achievements', async (req, res) => {
         student.research_contests.push({
           pType: scientificLevel,
           place: Number(scientificPlace),
+          date: scientificDate ? new Date(scientificDate) : null,
         });
       } else if (scientificSubtype === 'publication' && publicationRank) {
         const isVakRisc = publicationRank === 'vak_risc';
         student.publications = student.publications || [];
         student.publications.push({
           rank: isVakRisc,
+          date: publicationDate ? new Date(publicationDate) : null,
         });
       } else if (scientificSubtype === 'report' && reportsCount) {
         const count = Number(reportsCount) || 0;
@@ -886,6 +894,7 @@ app.post('/portfolio/:id/achievements', async (req, res) => {
         student.create_contests.push({
           pType: creativeLevel,
           place: Number(creativePlace),
+          date: creativeDate ? new Date(creativeDate) : null,
         });
       }
       break;
@@ -905,6 +914,7 @@ app.post('/portfolio/:id/achievements', async (req, res) => {
         student.sports_championships.push({
           pType: sportsLevel,
           place: 1,
+          date: sportsDate ? new Date(sportsDate) : null,
         });
       } else if (sportsSubtype === 'prize') {
         // Призёр (2–3 место), в весах используется ветка other
@@ -912,6 +922,7 @@ app.post('/portfolio/:id/achievements', async (req, res) => {
         student.sports_championships.push({
           pType: 'other',
           place: 2,
+          date: sportsDate ? new Date(sportsDate) : null,
         });
       } else if (sportsSubtype === 'popularization' && sportsPopularCount) {
         const count = Number(sportsPopularCount) || 0;

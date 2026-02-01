@@ -67,7 +67,7 @@
                                                 <p class="text-muted small mb-1">{{subtitle}}</p>
                                             {{/if}}
                                             {{#if description}}
-                                                <p class="card-text text-muted mb-0">{{description}}</p>
+                                                <p class="card-text text-muted mb-0">{{{description}}}</p>
                                             {{/if}}
                                             <div class="mt-auto text-end">
                                                 {{#unless (eq title "Отличник")}}
@@ -108,7 +108,7 @@
                                                 <p class="text-muted small mb-1">{{subtitle}}</p>
                                             {{/if}}
                                             {{#if description}}
-                                                <p class="card-text text-muted mb-0">{{description}}</p>
+                                                <p class="card-text text-muted mb-0">{{{description}}}</p>
                                             {{/if}}
                                             <div class="mt-auto text-end">
                                                 <button class="btn btn-secondary btn-sm delete-achievement" data-id="{{id}}" title="Удалить">
@@ -145,7 +145,7 @@
                                                 <p class="text-muted small mb-1">{{subtitle}}</p>
                                             {{/if}}
                                             {{#if description}}
-                                                <p class="card-text text-muted mb-0">{{description}}</p>
+                                                <p class="card-text text-muted mb-0">{{{description}}}</p>
                                             {{/if}}
                                             <div class="mt-auto text-end">
                                                 <button class="btn btn-secondary btn-sm delete-achievement" data-id="{{id}}" title="Удалить">
@@ -182,7 +182,7 @@
                                                 <p class="text-muted small mb-1">{{subtitle}}</p>
                                             {{/if}}
                                             {{#if description}}
-                                                <p class="card-text text-muted mb-0">{{description}}</p>
+                                                <p class="card-text text-muted mb-0">{{{description}}}</p>
                                             {{/if}}
                                             <div class="mt-auto text-end">
                                                 <button class="btn btn-secondary btn-sm delete-achievement" data-id="{{id}}" title="Удалить">
@@ -219,7 +219,7 @@
                                                 <p class="text-muted small mb-1">{{subtitle}}</p>
                                             {{/if}}
                                             {{#if description}}
-                                                <p class="card-text text-muted mb-0">{{description}}</p>
+                                                <p class="card-text text-muted mb-0">{{{description}}}</p>
                                             {{/if}}
                                             <div class="mt-auto text-end">
                                                 <button class="btn btn-secondary btn-sm delete-achievement" data-id="{{id}}" title="Удалить">
@@ -301,6 +301,10 @@
                   <option value="3">3 место</option>
                 </select>
               </div>
+              <div class="col-12">
+                <label for="olympDate" class="form-label">Дата</label>
+                <input type="date" class="form-control" id="olympDate" name="olympDate">
+              </div>
             </div>
 
             <div id="academic-programs-fields" class="mb-3 d-none">
@@ -342,6 +346,10 @@
                   <option value="3">3 место</option>
                 </select>
               </div>
+              <div class="col-12">
+                <label for="scientificDate" class="form-label">Дата</label>
+                <input type="date" class="form-control" id="scientificDate" name="scientificDate">
+              </div>
             </div>
 
             <div id="scientific-publication-fields" class="mb-3 d-none">
@@ -350,6 +358,8 @@
                 <option value="vak_risc">ВАК / РИНЦ</option>
                 <option value="other">Прочие издания</option>
               </select>
+              <label for="publicationDate" class="form-label mt-3">Дата</label>
+              <input type="date" class="form-control" id="publicationDate" name="publicationDate">
             </div>
 
             <div id="scientific-report-fields" class="mb-3 d-none">
@@ -385,6 +395,10 @@
                   <option value="3">3 место</option>
                 </select>
               </div>
+              <div class="col-12">
+                <label for="creativeDate" class="form-label">Дата</label>
+                <input type="date" class="form-control" id="creativeDate" name="creativeDate">
+              </div>
             </div>
           </div>
 
@@ -414,6 +428,10 @@
                   <option value="CFO">Чемпионат ЦФО</option>
                   <option value="Regional">Чемпионат области</option>
                 </select>
+              </div>
+              <div class="col-12">
+                <label for="sportsDate" class="form-label">Дата</label>
+                <input type="date" class="form-control" id="sportsDate" name="sportsDate">
               </div>
             </div>
 
@@ -453,21 +471,9 @@
             </div>
           </div>
 
-          <div class="row g-3 mb-3">
-            <div class="col-12 col-md-6">
-              <label for="achievementDate" class="form-label">Дата получения</label>
-              <input
-                type="date"
-                class="form-control"
-                id="achievementDate"
-                name="date"
-                required
-              >
-            </div>
-            {{!-- Поле баллов убираем, так как они считаются из весов --}}
           </div>
 
-          <div class="d-flex justify-content-end gap-2 mt-4">
+          <div class="d-flex justify-content-end gap-2 m-3">
             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
               Отмена
             </button>
