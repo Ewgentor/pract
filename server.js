@@ -7,7 +7,8 @@ const { Students, Weights } = require('./models');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-mongoose.connect('mongodb://127.0.0.1:27017/stipendia');
+const mongoUrl = process.env.MONGODB_URL || 'mongodb://127.0.0.1:27017/stipendia';
+mongoose.connect(mongoUrl);
 
 Weights.findOne().then(doc => {
   if (!doc) {

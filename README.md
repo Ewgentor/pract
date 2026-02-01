@@ -1,21 +1,48 @@
-# bun-react-tailwind-template
+# Система управления студентами и стипендией
 
-To install dependencies:
+Веб-приложение для управления данными студентов, отслеживания портфолио, отчетов и расчета стипендии на основе взвешивающих коэффициентов.
 
-```bash
-bun install
-```
+## Технологический стек
 
-To start a development server:
+- **Backend**: Node.js + Express.js
+- **Templating**: Express Handlebars
+- **Database**: MongoDB + Mongoose
+- **Frontend**: HTML, CSS, JavaScript
 
-```bash
-bun dev
-```
-
-To run for production:
+## Установка зависимостей
 
 ```bash
-bun start
+npm install
 ```
 
-This project was created using `bun init` in bun v1.3.6. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+## Запуск проекта
+
+### Для разработки (с перезагрузкой при изменениях):
+
+```bash
+npm run dev
+```
+
+### Для production:
+
+```bash
+npm start
+```
+
+Приложение будет доступно на `http://localhost:3000`
+
+## Структура проекта
+
+- `server.js` - основной файл сервера
+- `models.js` - MongoDB модели (Students, Weights)
+- `public/` - статические файлы (CSS, JavaScript)
+- `views/` - Handlebars шаблоны
+  - `layouts/` - основной шаблон
+  - `pages/` - страницы приложения
+  - `partials/` - переиспользуемые компоненты
+- `test/` - тесты
+
+## Требования
+
+- Node.js 14+
+- MongoDB (локальное подключение на `mongodb://127.0.0.1:27017/stipendia`)
